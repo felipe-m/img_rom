@@ -1,0 +1,109 @@
+<HTML>
+<HEAD>
+<TITLE>Creación de una ROM en VHDL a partir de una imagen</TITLE>
+<META NAME="Author" CONTENT="Felipe Machado">
+</HEAD>
+<BODY BGCOLOR=White>
+<H3> Cómo pasar una imagen a memoria ROM en VHDL</H3>
+Para im&aacute;genes peque&ntilde;as se podr&iacute;a hacer a mano, pero ser&iacute;a inviable para im&aacute;genes grandes, aqu&iacute; se propone una soluci&oacute;n 
+
+El programa está en lenguaje C, para usarlo tendrás que compilarlo y usar línea de comandos, bien en Linux con gcc, o en Windows con <A HREF="http://www.mingw.org">Mingw</A> o <A HREF="http://www.cygwin.com"A>Cygwin</A><BR>
+Los ficheros son:
+  <UL>
+  <LI>El fichero fuente en C: <A HREF="img2rom/ppm2rom.c">ppm2rom.c</A></LI>
+  <LI>La cabecera: <A HREF="img2rom/ppm2rom.h">ppm2rom.h</A></LI>
+  <LI>El makefile para compilar: <A HREF="img2rom/makefile">makefile</A></LI>
+  <LI>El ejecutable compilado en Mingw (posible que no te funione en tu ordenador: <A HREF="img2rom/ppm2rom.exe">ppm2rom.exe</A></LI>
+  <LI>El ejecutable compilado en Cygwin (posible que no te funione en tu ordenador: <A HREF="img2rom/ppm2rom_cygwin.exe">ppm2rom_cygwin.exe</A></LI>
+  <LI>Todo esto comprimido <A HREF="img2rom/img2rom.rar">img2rom.rar</A></LI>
+  <LI>Una versión antigua con ciertas diferencias, comprimida <A HREF="img2rom/img2rom_old.rar">img2rom_old.rar</A></LI>
+  </UL>
+
+
+
+
+<H4> Instrucciones </H4>
+<ol>
+  <li>Mediante un programa de dibujo, ajusta la imagen al número de pixeles que quieras. </li>
+
+
+  <li>Guarda la imagen en formato <A HREF="http://en.wikipedia.org/wiki/Portable_pixmap" target="_blank">PNM</A> (PBM, PGM o PPM) en modo ASCII. Para esto puedes guardar la imagen en este formato puedes usar el <a href="http://www.irfanview.com/" target="_blank"> Irfanview</a> o el <a href="http://www.imagemagick.org" target="_blank">ImageMagick</a> (puedes utilizar otras herramientas de dibujo pero éstas son gratuitas) 
+    <TABLE border=1>
+    <TR><TD>
+      Con el Irfanview simplemente pincha en <I>save as</I> y selecciona
+        <UL>
+           <LI><B>PBM</B>: para imágenes de 1 bit de profundidad (blanco y negro)</LI>
+           <LI><B>PGM</B>: para imágenes de un color de 8 bits de profundidad (escala de grises)</LI>
+           <LI><B>PPM</B>: para imágenes de tres color de 8 bits de profundidad cada color (RGB)</LI>
+            Siempre con estas opciones:<UL>
+                 <LI> Compression level=0 </LI>
+                 <LI>todas las opciones sin seleccionar </LI>
+                 <LI>ASCII encoding</LI>
+           </UL>
+         </UL>
+    </TD></TR>
+    <TR><TD>
+      Con el ImageMagik debes usar línea de comandos:
+
+
+    <UL>
+       <LI> <B>PBM</B>: Para imágenes de 1 bit de profundidad (blanco y negro), el comando es: <B><FONT COLOR=GREEN><code>convert -compress none <FONT color=RED><EM>imagen.png</FONT></EM> imagen.pbm</code></FONT></B> </LI>
+       <LI> <B>PGM</B>: Para imágenes de un color de 8 bits de profundidad (escala de grises), el comando es: <B><FONT COLOR=GREEN><code>convert -compress none <FONT color=RED><EM>imagen.png</FONT></EM> imagen.pgm</code></FONT></B> </LI> 
+       <LI> <B>PPM</B>: Para imágenes de tres colores de 8 bits de profundidad cada color (RGB):  el comando es: <B><FONT COLOR=GREEN><code>convert -compress none <FONT color=RED><EM>imagen.png</FONT></EM> imagen.ppm</code></FONT></B> </LI>
+
+  <I>NOTAS</I>:
+    <UL>
+      <LI> El nombre <B><FONT COLOR=RED><em><code>imagen.png</code></em></FONT></B> es el nombre de la imagen original que has creado, puede ser otro nombre y otro formato de imagen.</LI>
+      <LI> Si tienes instalado el ImageMagick, para ejecutarlo haz: Inicio-&gt;Ejecutar-&gt;cmd y vas al directorio donde est&eacute; la imagen y escribe cualquiera de los tres comandos arriba indicados </LI>
+      <LI> Es importante que incluyas la opción <code> -compress none</code> pues si no se guardará en binario. </LI>
+    </UL>
+   </UL>
+
+    </TD></TR>
+    </TABLE>
+
+
+  <li> Ahora la convertimos la imagen PNM a un fichero VHDL mediante el ejecutable <code>ppm2rom.exe</code>, según sea el formato de la imagen ejecutaremos:
+    <UL>
+      <LI> PBM (blanco y negro): <code><B><FONT COLOR=GREEN>ppm2rom.exe imagen.pbm [0-1]</FONT></B></code><BR>
+           El último argumento es opcional, si se pone un 1 creará una ROM en la que cada píxel de la imagen se corresponderá con una dirección de memoria. El ancho de palabra de la memoria será de un bit. Así pues, las ROM tendrá tantos elementos como el número de filas multiplicado por el número de columnas.  <BR>
+  Si se pone un 0, cada fila de la imagen se corresponderá con una direccion de memoria. Por tanto, el ancho de palabra se corresponderá con el número de columnas de la imagen. Así pues, la ROM tendrá tantos elementos como número de filas. <B> 0 es el valor por defecto para PBM</B>
+
+     </li>
+      <LI> PGM (escala de grises, 8 bits): <code><B><FONT COLOR=GREEN>ppm2rom.exe imagen.pgm [2-8]</FONT></B></code>
+	<BR>
+	8 es el valor por defecto, pero se puede poner cualquier número entre 2 y 8. Para números menores, la ROM será más pequeña y por tanto se ahorrará en tamaño
+
+
+</LI>
+      <LI> PPM (RGB, 8 bits cada color): <code><B><FONT COLOR=GREEN>ppm2rom.exe imagen.ppm [BitsMemo: 0-8] [NumMemo: 1,3]</FONT></B></code><BR>
+           <B>BitsMemo</B> Indica el numero de bits de cada palabra de la memoria.<BR>
+              Puede ser:
+		de 1 a 8: Entre 1 y 8 bits cada palabra
+		0: Cada palabra (cada dirección) devuelve una fila completa (cada pixel 1 bit de color)<BR>
+	   <B>NumMemo</B> Indica si se usa una o tres memorias para los colores.
+  <BR><B> <FONT COLOR=RED>Ejemplos:</FONT></B><BR>
+                        + <B>NumMemo = 1</B>, indica que en una memoria se agrupan los tres colores<BR>
+                          Por ejemplo:<BR>
+                            *BitsMemo=3 NumMemo=1 : Se crea una memoria que cada palabra alberga los 3 colores: RGB (1 bit para cada color: 8 colores)<BR>
+                            *BitsMemo=6 NumMemo=1 : Se crea una memoria que cada palabra alberga los 3 colores: RGB (2 bits para cada color: 64 colores)<BR>
+                            *BitsMemo=8 NumMemo=1 : Se crea una memoria que cada palabra alberga los tres colores: RGB (3 bits para rojo, 3 para verde y 2 bits para azul: 256 colores)<BR>
+                            *BitsMemo=9 NumMemo=1 : Se crea una memoria que cada palabra alberga los tres colores: RGB (3 bits para cada color: 512 colores)<BR>
+                        + <B>NumMemo = 3</B>, indica que se crean tres memorias, una para cada color<BR>
+                            *BitsMemo=8 NumMemo=3 : Se crean 3 memorias que cada palabra alberga 8 bits del pixel de su color: 2<SUP>24</SUP>: más de 16 millones de colores<BR>
+                            *BitsMemo=4 NumMemo=3 : Se crean 3 memorias que cada palabra alberga 4 bits del pixel de su color: 2<SUP>12</SUP>: 4096 colores<BR>
+                            *BitsMemo=1 NumMemo=3 : Se crean 3 memorias que cada palabra alberga 1 bit del pixel de su color: 2<SUP>3</SUP>: 8 colores<BR>
+                            *BitsMemo=0 NumMemo=3 : Se crean 3 memorias que cada palabra contiene la fila de la imagen en su color: un bit para cada color: 8 colores. <BR>&nbsp;&nbsp;&nbsp;Esta ROM no conviene para imágenes con más de 36 columnas<BR>
+
+      </LI>
+    </UL>
+       <li>El resultado es una ROM VHDL sintetizable que podr&aacute;s utilizar para tus dibujos en pantalla.</li>
+       <li>Si quieres poner m&aacute;s de un dibujo en la ROM, puedes crear varias memorias ROM y luego a mano, copiarlas y pegarlas en una sola (modificando el n&uacute;mero de direcciones de memoria).</li>
+ </OL>
+
+
+</ol>
+
+
+</BODY>
+<HTML>

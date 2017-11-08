@@ -5,7 +5,8 @@
 #define LF 10            /* Decimal code of Line Feed char */
 
 /* en teoria el maximo es 70 */
-#define MAX_LINEA_PPM 120
+/* Irfanview tiene aveces 128 */
+#define MAX_LINEA_PPM 129
 
 /*enum buscar { berror, buscoTipo, buscoAncho, buscoAlto, buscoProf, buscoNada};*/
 #define berror 0

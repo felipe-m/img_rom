@@ -7,7 +7,37 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-package PKG_ROM_IMGS_3x4 is
+package PKG_ROM_IMGS is
+
+  -- constant lab_20b
+  -- constant monster_blue
+  -- constant monster_red
+  -- constant monster_green
+  -- constant mario_blue
+  -- constant mario_red
+  -- constant mario_green
+  -- constant pacman_blue
+  -- constant pacman_red
+  -- constant pacman_green
+
+  type memostruct_2b is array (natural range<>) of std_logic_vector(20-1 downto 0);
+  constant lab_20b : memostruct_2b := (
+       "11111111100111111111",
+       "10000100000000010001",
+       "10110101111101010101",
+       "10000000010001000101",
+       "00101111010111110100",
+       "10100000000000100101",
+       "10110101100110101101",
+       "00000101000010000000",
+       "10110101111110111101",
+       "10010000000000000001",
+       "11010101110110111011",
+       "10000100010000100001",
+       "10111111011011111101",
+       "10000000000000000001",
+       "11111111100111111111"
+        );
 
   --signal addr_int  : natural range 0 to 2**10-1;
   type memostruct is array (natural range<>) of std_logic_vector(4-1 downto 0);
@@ -9260,5 +9290,5 @@ package PKG_ROM_IMGS_3x4 is
 
 
 
-end PKG_ROM_IMGS_3x4;
+end PKG_ROM_IMGS;
 

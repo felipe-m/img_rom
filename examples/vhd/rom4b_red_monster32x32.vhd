@@ -5,7 +5,7 @@
 ------- http://gtebim.es ---------------------------------
 ----------------------------------------------------------
 --------Datos de la imagen -------------------------------
---- Fichero original    : pacman32x32.ppm 
+--- Fichero original    : monster32x32.ppm 
 --- Filas    : 32 
 --- Columnas : 32 
 --- Color    :  4 bits
@@ -25,16 +25,16 @@ library IEEE;
   use IEEE.NUMERIC_STD.ALL;
 
 
-entity ROM4b_red_pacman32x32 is
+entity ROM4b_red_monster32x32 is
   port (
     clk  : in  std_logic;   -- reloj
     addr : in  std_logic_vector(10-1 downto 0);
     dout : out std_logic_vector(4-1 downto 0) 
   );
-end ROM4b_red_pacman32x32;
+end ROM4b_red_monster32x32;
 
 
-architecture BEHAVIORAL of ROM4b_red_pacman32x32 is
+architecture BEHAVIORAL of ROM4b_red_monster32x32 is
   signal addr_int  : natural range 0 to 2**10-1;
   type memostruct is array (natural range<>) of std_logic_vector(4-1 downto 0);
   constant filaimg : memostruct := (

@@ -80,3 +80,15 @@ En carpeta vhd hay ejemplos de ROM en VHDL, en la carpeta img estan los original
 1. [rom_rgb_3b_monster_16x16_rojo.vhd](vhd/rom_rgb_3b_monster_16x16_rojo.vhd)
 
 
+## Monster blanco y negro
+* Imagen de 16x16.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 16 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![monster_bn_16](img/monster_bn_16x16_negro.png)
+
+
+1. [rom1b_1f_monster_16_t.vhd](vhd/rom1b_1f_monster_16_t.vhd)
+
+

@@ -66,7 +66,7 @@ En carpeta vhd hay ejemplos de ROM en VHDL, en la carpeta img estan los original
 1. [rom_rgb_3b_mario_run_16x16.vhd](vhd/rom_rgb_3b_mario_run_16x16.vhd)
 
 
-## Monster rojo
+## Fantasma rojo
 * Imagen de 16x16.
 * Una memoria. En cada direccion de memoria estan los 3 colores RGB
 * Cada pixel en una direccion de memoria: 256 direcciones
@@ -80,7 +80,7 @@ En carpeta vhd hay ejemplos de ROM en VHDL, en la carpeta img estan los original
 1. [rom_rgb_3b_monster_16x16_rojo.vhd](vhd/rom_rgb_3b_monster_16x16_rojo.vhd)
 
 
-## Monster blanco y negro
+## Fantasma blanco y negro
 * Imagen de 16x16.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
 * Cada pixel es un bit de la dirección de memoria.
@@ -92,7 +92,31 @@ En carpeta vhd hay ejemplos de ROM en VHDL, en la carpeta img estan los original
 1. [rom1b_1f_monster_16_t.vhd](vhd/rom1b_1f_monster_16_t.vhd)
 
 
-## Laberinto 20x15 blanoo y negro
+## Fantasma blanco y negro asustado
+* Imagen de 16x16.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 16 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![monster_bn_16_scared](img/monster_bn_16x16_scared.png)
+* ![monster_bn_16_scared_x4](img/monster_bn_16x16_scared_x4.png)
+
+1. [rom1b_1f_monster_16_t.vhd](vhd/rom1b_1f_monster_16_scared_t.vhd)
+
+
+## Fantasma blanco y negro normal y asustado en una memoria
+* Imagen de 16 columnas x 32 filas.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 32 direcciones de memoria (dos imágenes)
+* 1 bit para el color (monocroma)
+* ![monster_bn_16_scared](img/monster_bn_16x32_normal_scared.png)
+* ![monster_bn_16_scared_x4](img/monster_bn_16x32_normal_scared_x4.png)
+
+1. [rom1b_1f_monster_16_t.vhd](vhd/rom1b_1f_monster_16x32_normal_scared_t.vhd)
+
+
+## Laberinto 20x15 blanco y negro
 * Imagen de 20 columnas x 15 filas
 * Una memoria. En cada direccion de memoria está la fila de 20 bits(pixeles)
 * Cada pixel es un bit de la dirección de memoria.

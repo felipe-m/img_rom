@@ -116,6 +116,28 @@ En carpeta vhd hay ejemplos de ROM en VHDL, en la carpeta img estan los original
 1. [rom1b_1f_monster_16_t.vhd](vhd/rom1b_1f_monster_16x32_normal_scared_t.vhd)
 
 
+
+## 8 personajes y formas en una memoria
+* Imagen de 16 columnas x 128 filas.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 128 direcciones de memoria (8 imágenes)
+  * Opción: 1 bit para el color (monocroma)
+  * Opción: 3 bit para el color (3 memorias)
+
+En color:
+![8imagenes_color_16](img/imagenes8_16x16.png)
+1. [rom1b_red_imagenes8_16x16.vhd](vhd/rom1b_red_imagenes8_16x16.vhd)
+1. [rom1b_green_imagenes8_16x16.vhd](vhd/rom1b_green_imagenes8_16x16.vhd)
+1. [rom1b_blue_imagenes8_16x16.vhd](vhd/rom1b_blue_imagenes8_16x16.vhd)
+
+En blanco y negro
+![8imagenes_color_16](img/imagenes8_16x16_bn.png)
+1. [rom1b_1f_imagenes8_16x16_bn_t.vhd](vhd/rom1b_1f_imagenes8_16x16_bn_t.vhd)
+
+
+
+
 ## Laberinto 20x15 blanco y negro
 * Imagen de 20 columnas x 15 filas
 * Una memoria. En cada direccion de memoria está la fila de 20 bits(pixeles)

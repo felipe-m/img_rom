@@ -61,9 +61,9 @@ Los ficheros son:
     *   PBM (blanco y negro): **`ppm2rom.exe imagen.pbm [0-1]`**  
         El último argumento es opcional, si se pone un 1 creará una ROM en la que cada píxel de la imagen se corresponderá con una dirección de memoria. El ancho de palabra de la memoria será de un bit. Así pues, las ROM tendrá tantos elementos como el número de filas multiplicado por el número de columnas.  
         Si se pone un 0, cada fila de la imagen se corresponderá con una direccion de memoria. Por tanto, el ancho de palabra se corresponderá con el número de columnas de la imagen. Así pues, la ROM tendrá tantos elementos como número de filas. **0 es el valor por defecto para PBM**
-    *   PGM (escala de grises, 8 bits): `**ppm2rom.exe imagen.pgm [2-8]**`  
+    *   PGM (escala de grises, 8 bits): **`ppm2rom.exe imagen.pgm [2-8]`**  
         8 es el valor por defecto, pero se puede poner cualquier número entre 2 y 8\. Para números menores, la ROM será más pequeña y por tanto se ahorrará en tamaño
-    *   PPM (RGB, 8 bits cada color): `**ppm2rom.exe imagen.ppm [BitsMemo: 0-8] [NumMemo: 1,3]**`  
+    *   PPM (RGB, 8 bits cada color): **`ppm2rom.exe imagen.ppm [BitsMemo: 0-8] [NumMemo: 1,3]`**  
         **BitsMemo** Indica el numero de bits de cada palabra de la memoria.  
         Puede ser: de 1 a 8: Entre 1 y 8 bits cada palabra 0: Cada palabra (cada dirección) devuelve una fila completa (cada pixel 1 bit de color)  
         **NumMemo** Indica si se usa una o tres memorias para los colores.  

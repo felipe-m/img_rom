@@ -1,12 +1,13 @@
 --- Autcmatically generated VHDL ROM from a NES memory file----
---- Originial memory dump file name: smario_ntable01.dmp --
+---   NAME TABLE
+-- https://wiki.nesdev.com/w/index.php/PPU_nametables
+
+---  Original memory dump file name: smario_ntable01.dmp --
 ------ Felipe Machado -----------------------------------
 ------ Area de Tecnologia Electronica -----------
 ------ Universidad Rey Juan Carlos ----------------------
 ------ https://github.com/felipe-m ----------------------
 ---------------------------------------------------------
-
-
 
 ----- Ports ---------------------------------------------
 -- Inputs   ---------------------------------------------
@@ -23,14 +24,14 @@ library IEEE;
 
 entity ROM_NTABLE_SMARIO_01 is
   port (
-    clk  : in  std_logic;   -- reloj
-    addr : in  std_logic_vector(8-1 downto 0);  --2048 memory positions
+    clk  : in  std_logic;   -- clock
+    addr : in  std_logic_vector(11-1 downto 0);  --2048 memory positions
     dout : out std_logic_vector(8-1 downto 0) -- memory data width
   );
 end ROM_NTABLE_SMARIO_01;
 
 architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
-  signal addr_int  : natural range 0 to 2**8-1;
+  signal addr_int  : natural range 0 to 2**11-1;
   type memostruct is array (natural range<>) of std_logic_vector(8-1 downto 0);
   constant nametable_mem : memostruct := (
                 --    address   :    value 

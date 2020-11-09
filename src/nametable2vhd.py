@@ -13,6 +13,7 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
                    0: Name Table
                    1: Pattern Table
                    2: Pattern Table with only one color plane
+                   3: Attribute Table (separate from Name table)
     entityname  : string with the entity name
     origname    : string with the original memory dump file name
     mem_length  : number of memory positions
@@ -28,9 +29,12 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     elif nesmemtype == 1:  # Pattern Table (normal)
         vhdfile.write('---   PATTERN TABLE\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
-    elif nesmemtype == 2:  # Pattern Table (separated plane colores)
+    elif nesmemtype == 2:  # Pattern Table (separated plane colors)
         vhdfile.write('---   PATTERN TABLE WITH ONLY ONE COLOR PLANE\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+    elif nesmemtype == 3:  # Atribute Table (separated from Name Table)
+        vhdfile.write('---   ATTRIBUTE TABLE SEPARATED FROM NAME TABLE\n')
+        vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_attribute_tables\n')
     vhdfile.write('\n')
     vhdfile.write('---  Original memory dump file name: ' + orig_name + ' --\n')
     vhdfile.write('------ Felipe Machado -----------------------------------\n')
@@ -62,13 +66,8 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     vhdfile.write('architecture BEHAVIORAL of ' + entityname +' is\n')
     vhdfile.write('  signal addr_int  : natural range 0 to 2**' + str(numbits_addr) + '-1;\n')
     vhdfile.write('  type memostruct is array (natural range<>) of std_logic_vector('+ str(mem_width) +'-1 downto 0);\n');
-    vhdfile.write('  constant nametable_mem : memostruct := (\n');
+    vhdfile.write('  constant table_mem : memostruct := (\n');
 
-
-"""
-   dumpfilename : name of the Name Table memory file dump .dmp
-              example: smb_ram_nametable_init.dmp supermario bros initial table
-"""
 
 
 def nesmem2vhd (dumpfilename,
@@ -96,8 +95,9 @@ def nesmem2vhd (dumpfilename,
 
 
     filemem_length = os.stat(dumpfilename).st_size # number of memory positions
-    if nesmemtype == 0 : # Name Table: 2048 memory positions
-        mem_length = 2048
+    if nesmemtype == 0 or nesmemtype == 3: # Name Table: 2048 memory positions
+        # Attribute table (3) uses a Name Table
+        mem_length = 2048   
     else:  # Pattern Table
         # it has the background and the sprites pattern table, 4KiB each
         # 8192 positions 2**13 -> 0x2000
@@ -135,12 +135,81 @@ def nesmem2vhd (dumpfilename,
             vhdfile.write('  P_ROM: process(clk)\n')
             vhdfile.write('  begin\n')
             vhdfile.write("    if clk'event and clk='1' then\n")
-            vhdfile.write('      dout <= nametable_mem(addr_int);\n')
+            vhdfile.write('      dout <= table_mem(addr_int);\n')
             vhdfile.write('    end if;\n')
             vhdfile.write('  end process;\n')
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
             
+
+
+
+def nesmem2vhdattr (dumpfilename,
+                    mem_width=8,
+                    rom_name = "ROM_NESTABLE",
+                    dest_path = './'):
+    """
+    Takes a binary memory dump file of a NES memory,
+    takes a Name Tables but only converts the attribute table
+
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   2KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: VHDL entity name to be created
+    dest_path    : path of the VHDL file to be created
+    """
+
+
+    filemem_length = os.stat(dumpfilename).st_size # number of memory positions
+    mem_length = 2048   
+    attrmem_length = 128 # 2x64
+
+    if os.path.isfile(dumpfilename) and (mem_length == filemem_length):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        vhdfilename = dest_path + basefilename + "_attr.vhd"
+        vhdfile = open(vhdfilename, 'w')
+        # write the header
+        write_vhd_header (vhdfile, 3, rom_name, # 3 Attribute table
+                          filename,attrmem_length,mem_width)
+        vhdfile.write('                --    address   :    value \n' )
+        vhdfile.write('                --  dec -  hex  :  dec - hex\n')
+        with open(dumpfilename,"rb") as nametablefile:
+            mem_addr = 0;
+            attrmem_addr = 0;
+            while (byte_str := nametablefile.read(1)): 
+                if ((mem_addr >= 960 and mem_addr < 1024) or
+                    (mem_addr >= 960 + 1024)) :
+                    byte = ord(byte_str) #gets the unicode character
+                    #byte_num = int.from_bytes(byte_str)
+                    byte_bin_str = (format(byte,'b')).zfill(8)
+                    vhdfile.write('    "' + byte_bin_str + '"')
+                    if mem_addr < mem_length-1 :
+                        vhdfile.write(',')  # the last one dont have comma
+                    else:
+                        vhdfile.write(' ') #space
+
+                    #vhdfile.write(' --' + str(mem_addr)+' : '+str(byte)+'\n')
+                    vhdfile.write(' --' + str(attrmem_addr).rjust(5) + ' - ' )
+                    vhdfile.write(hex(attrmem_addr).rjust(4) + '  :  ')
+                    vhdfile.write(str(byte).rjust(3)+' - ')
+                    vhdfile.write(hex(byte).rjust(3)+'\n')
+                    attrmem_addr += 1;
+                mem_addr += 1
+            vhdfile.write('    );\n')
+            vhdfile.write('begin\n')
+            vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
+            vhdfile.write('  P_ROM: process(clk)\n')
+            vhdfile.write('  begin\n')
+            vhdfile.write("    if clk'event and clk='1' then\n")
+            vhdfile.write('      dout <= table_mem(addr_int);\n')
+            vhdfile.write('    end if;\n')
+            vhdfile.write('  end process;\n')
+            vhdfile.write('end BEHAVIORAL;\n')
+        vhdfile.close()
+            
+
 
 
 
@@ -224,6 +293,8 @@ def patterntable2vhdsplit (dumpfilename,
                             vhdfile.write('    "' + byte_bin_str + '"')
                             if not(table == 1 and pat == 255 and row == 7):
                                 vhdfile.write(',') #the last one dont have comma
+                            else:
+                                vhdfile.write(' ') #space
 
                             vhdfile.write(' --' + str(addr).rjust(5) + ' - ' )
                             vhdfile.write(hex(addr).rjust(4) + '  :  ')
@@ -236,7 +307,7 @@ def patterntable2vhdsplit (dumpfilename,
                 vhdfile.write('  P_ROM: process(clk)\n')
                 vhdfile.write('  begin\n')
                 vhdfile.write("    if clk'event and clk='1' then\n")
-                vhdfile.write('      dout <= nametable_mem(addr_int);\n')
+                vhdfile.write('      dout <= table_mem(addr_int);\n')
                 vhdfile.write('    end if;\n')
                 vhdfile.write('  end process;\n')
                 vhdfile.write('end BEHAVIORAL;\n')
@@ -253,6 +324,12 @@ nesmem2vhd(dumpfilename = "../examples/dmp/smario_ptable.dmp",
               nesmemtype = 1, # Pattern Table
               rom_name = "ROM_PTABLE_SMARIO",
               dest_path = "../examples/vhd/patterntables/")
+
+# creates attribute table (separated)
+nesmem2vhdattr(dumpfilename = "../examples/dmp/smario_ntable01.dmp",
+              rom_name = "ROM_ATABLE_SMARIO_01",
+              dest_path = "../examples/vhd/nametables/")
+
 
 patterntable2vhdsplit (dumpfilename = "../examples/dmp/smario_ptable.dmp",
                        rom_name = "ROM_PTABLE_SMARIO",

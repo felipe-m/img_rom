@@ -33,7 +33,7 @@ end ROM_NTABLE_SMARIO_01;
 architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
   signal addr_int  : natural range 0 to 2**11-1;
   type memostruct is array (natural range<>) of std_logic_vector(8-1 downto 0);
-  constant nametable_mem : memostruct := (
+  constant table_mem : memostruct := (
                 --    address   :    value 
                 --  dec -  hex  :  dec - hex
     "00100100", --    0 -  0x0  :   36 - 0x24
@@ -2090,7 +2090,7 @@ begin
   P_ROM: process(clk)
   begin
     if clk'event and clk='1' then
-      dout <= nametable_mem(addr_int);
+      dout <= table_mem(addr_int);
     end if;
   end process;
 end BEHAVIORAL;

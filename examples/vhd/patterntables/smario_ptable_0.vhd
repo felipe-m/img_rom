@@ -33,7 +33,7 @@ end ROM_PTABLE_SMARIO_color0;
 architecture BEHAVIORAL of ROM_PTABLE_SMARIO_color0 is
   signal addr_int  : natural range 0 to 2**12-1;
   type memostruct is array (natural range<>) of std_logic_vector(8-1 downto 0);
-  constant nametable_mem : memostruct := (
+  constant table_mem : memostruct := (
                 --    address   :    value 
                 --  dec -  hex  :  dec - hex
     "00000011", --    0 -  0x0  :    3 - 0x3
@@ -4131,14 +4131,14 @@ architecture BEHAVIORAL of ROM_PTABLE_SMARIO_color0 is
     "11111111", -- 4092 - 0xffc  :  255 - 0xff
     "11111111", -- 4093 - 0xffd  :  255 - 0xff
     "11111111", -- 4094 - 0xffe  :  255 - 0xff
-    "11111111" -- 4095 - 0xfff  :  255 - 0xff
+    "11111111"  -- 4095 - 0xfff  :  255 - 0xff
     );
 begin
   addr_int <= to_integer(unsigned(addr));
   P_ROM: process(clk)
   begin
     if clk'event and clk='1' then
-      dout <= nametable_mem(addr_int);
+      dout <= table_mem(addr_int);
     end if;
   end process;
 end BEHAVIORAL;

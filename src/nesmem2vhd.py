@@ -95,6 +95,7 @@ def nesmem2vhd (dumpfilename,
                    0: Name Table
                    1: Pattern Table
                    4: Palette Memory
+                   5: Palette Colors
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
@@ -114,6 +115,9 @@ def nesmem2vhd (dumpfilename,
         # and the sprites: 32
         # 5 positions 2**5 -> 0x20
         mem_length = 2**5 # 32
+    elif nesmemtype == 5:  # Palette Colors
+        # it has the background 64 colors in different RGB configurations
+        mem_length = 2**6 # 64 (if RGB in each memory address)
 
 
     if os.path.isfile(dumpfilename) and (mem_length == filemem_length):
@@ -226,8 +230,6 @@ def nesmem2vhdattr (dumpfilename,
             
 
 
-
-
 def patterntable2vhdsplit (dumpfilename,
                            mem_width=8,
                            rom_name = "ROM_PTABLE",
@@ -330,6 +332,83 @@ def patterntable2vhdsplit (dumpfilename,
         vhdfile1.close()
 
 
+def palcolor2vhd (palfilename,
+                  mem_width=12,
+                  rom_name = "ROM_COLORS",
+                  dest_path = './'):
+    """
+    Takes a binary palette file and converts to VHDL ROM
+
+    palfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .pal
+                   64 colors x 3 (RGB)
+                   192 bytes
+    mem_width    : memory width is 12 bits (4x3) can be different
+    rom_name     : string: VHDL entity name to be created
+    dest_path    : path of the VHDL file to be created
+    """
+
+
+    filemem_length = os.stat(palfilename).st_size # number of memory positions
+    mem_length = 192   
+
+    if os.path.isfile(palfilename) and (mem_length == filemem_length):
+        filename = os.path.split(palfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        vhdfilename = dest_path + basefilename + "_colors.vhd"
+        vhdfile = open(vhdfilename, 'w')
+        # write the header
+        write_vhd_header (vhdfile, 5, rom_name, # 3 ROM COLORS
+                          filename,64,mem_width)
+        vhdfile.write('                       --    address   :    value \n' )
+        vhdfile.write('                       --  dec -  hex  :  dec - hex(RGB)\n')
+        with open(palfilename,"rb") as nametablefile:
+            pal_filebyte = 0;
+            color = 0;
+            mem_addr = 0;
+            while (byte_str := nametablefile.read(1)): 
+                if color == 0:  # First byte: RED
+                    byte = ord(byte_str) #gets the unicode character
+                    nibble_red = int(byte/16); #get only four bits
+                    color = 1 #next will be green
+                elif color == 1: # Second byte: GREEN
+                    byte = ord(byte_str) #gets the unicode character
+                    nibble_green = int(byte/16); #get only four bits
+                    color = 2 #next will be blue
+                elif color == 2: # Third byte: BLUE
+                    byte = ord(byte_str) #gets the unicode character
+                    nibble_blue = int(byte/16); #get only four bits
+                    color = 0 #next back to green
+
+                    color12bits = nibble_red*256 + nibble_green*16 + nibble_blue
+
+                    color_bin_str = (format(color12bits,'b')).zfill(12)
+                    vhdfile.write('    "' + color_bin_str + '"')
+                    if pal_filebyte < mem_length-1 :
+                        vhdfile.write(',')  # the last one dont have comma
+                    else:
+                        vhdfile.write(' ') #space
+
+                    #vhdfile.write(' --' + str(pal_filebyte)+' : '+str(byte)+'\n')
+                    vhdfile.write(' --' + str(mem_addr).rjust(5) + ' - ' )
+                    vhdfile.write(hex(mem_addr).rjust(4) + '  :  ')
+                    vhdfile.write(str(color12bits).rjust(4)+' - ')
+                    vhdfile.write(hex(color12bits).rjust(5)+'\n')
+                    mem_addr += 1;
+                pal_filebyte += 1
+            vhdfile.write('    );\n')
+            vhdfile.write('begin\n')
+            vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
+            vhdfile.write('  P_ROM: process(clk)\n')
+            vhdfile.write('  begin\n')
+            vhdfile.write("    if clk'event and clk='1' then\n")
+            vhdfile.write('      dout <= table_mem(addr_int);\n')
+            vhdfile.write('    end if;\n')
+            vhdfile.write('  end process;\n')
+            vhdfile.write('end BEHAVIORAL;\n')
+        vhdfile.close()
+
+
 nesmem2vhd(dumpfilename = "../examples/dmp/smario_ntable01.dmp",
               nesmemtype = 0, # Name Table
               rom_name = "ROM_NTABLE_SMARIO_01",
@@ -354,4 +433,9 @@ nesmem2vhd(dumpfilename = "../examples/dmp/smario_palette.dmp",
 patterntable2vhdsplit (dumpfilename = "../examples/dmp/smario_ptable.dmp",
                        rom_name = "ROM_PTABLE_SMARIO",
                        dest_path = '../examples/vhd/patterntables/')
+
+palcolor2vhd (palfilename = "../examples/dmp/nespalette.pal",
+                  mem_width=12,
+                  rom_name = "ROM_COLORS",
+                  dest_path = '../examples/vhd/nametables/')
 

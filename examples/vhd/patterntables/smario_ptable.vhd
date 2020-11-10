@@ -2,6 +2,7 @@
 ---   PATTERN TABLE
 -- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
 
+
 ---  Original memory dump file name: smario_ptable.dmp --
 ------ Felipe Machado -----------------------------------
 ------ Area de Tecnologia Electronica -----------
@@ -8227,7 +8228,7 @@ architecture BEHAVIORAL of ROM_PTABLE_SMARIO is
     "11111111", -- 8188 - 0x1ffc  :  255 - 0xff
     "11111111", -- 8189 - 0x1ffd  :  255 - 0xff
     "11111111", -- 8190 - 0x1ffe  :  255 - 0xff
-    "11111111" -- 8191 - 0x1fff  :  255 - 0xff
+    "11111111"  -- 8191 - 0x1fff  :  255 - 0xff
     );
 begin
   addr_int <= to_integer(unsigned(addr));

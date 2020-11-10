@@ -2,6 +2,7 @@
 ---   ATTRIBUTE TABLE SEPARATED FROM NAME TABLE
 -- https://wiki.nesdev.com/w/index.php/PPU_attribute_tables
 
+
 ---  Original memory dump file name: smario_ntable01.dmp --
 ------ Felipe Machado -----------------------------------
 ------ Area de Tecnologia Electronica -----------

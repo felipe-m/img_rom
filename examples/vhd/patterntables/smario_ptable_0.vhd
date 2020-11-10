@@ -2,6 +2,7 @@
 ---   PATTERN TABLE WITH ONLY ONE COLOR PLANE
 -- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
 
+
 ---  Original memory dump file name: smario_ptable.dmp --
 ------ Felipe Machado -----------------------------------
 ------ Area de Tecnologia Electronica -----------

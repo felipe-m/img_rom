@@ -2,6 +2,7 @@
 ---   NAME TABLE
 -- https://wiki.nesdev.com/w/index.php/PPU_nametables
 
+
 ---  Original memory dump file name: smario_ntable01.dmp --
 ------ Felipe Machado -----------------------------------
 ------ Area de Tecnologia Electronica -----------
@@ -2083,7 +2084,7 @@ architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
     "00000000", -- 2044 - 0x7fc  :    0 - 0x0
     "00000000", -- 2045 - 0x7fd  :    0 - 0x0
     "00000000", -- 2046 - 0x7fe  :    0 - 0x0
-    "00000000" -- 2047 - 0x7ff  :    0 - 0x0
+    "00000000"  -- 2047 - 0x7ff  :    0 - 0x0
     );
 begin
   addr_int <= to_integer(unsigned(addr));

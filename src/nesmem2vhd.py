@@ -1,7 +1,7 @@
 import os
 import math
 
-# exec(open("./nametable2vhd.py").read())
+# exec(open("./nesmem2vhd.py").read())
 
 
 def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, mem_width):
@@ -14,6 +14,7 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
                    1: Pattern Table
                    2: Pattern Table with only one color plane
                    3: Attribute Table (separate from Name table)
+                   4: Palette Memory
     entityname  : string with the entity name
     origname    : string with the original memory dump file name
     mem_length  : number of memory positions
@@ -35,6 +36,10 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     elif nesmemtype == 3:  # Atribute Table (separated from Name Table)
         vhdfile.write('---   ATTRIBUTE TABLE SEPARATED FROM NAME TABLE\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_attribute_tables\n')
+    elif nesmemtype == 4:  # Palette Memory
+        vhdfile.write('---   PALETTE MEMORY\n')
+        vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_palettes\n')
+    vhdfile.write('\n')
     vhdfile.write('\n')
     vhdfile.write('---  Original memory dump file name: ' + orig_name + ' --\n')
     vhdfile.write('------ Felipe Machado -----------------------------------\n')
@@ -81,6 +86,7 @@ def nesmem2vhd (dumpfilename,
       https://wiki.nesdev.com/w/index.php/PPU_nametables
       https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
         Both Sprites and Background
+      https://wiki.nesdev.com/w/index.php/PPU_palettes
 
     dumpfilename : name of the memory dump file (includes path and extension)
                    binary file. File extension usually is .dmp
@@ -88,6 +94,7 @@ def nesmem2vhd (dumpfilename,
     nesmemtype   : memory type
                    0: Name Table
                    1: Pattern Table
+                   4: Palette Memory
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
@@ -98,10 +105,16 @@ def nesmem2vhd (dumpfilename,
     if nesmemtype == 0 or nesmemtype == 3: # Name Table: 2048 memory positions
         # Attribute table (3) uses a Name Table
         mem_length = 2048   
-    else:  # Pattern Table
+    elif nesmemtype == 1:  # Pattern Table
         # it has the background and the sprites pattern table, 4KiB each
         # 8192 positions 2**13 -> 0x2000
         mem_length = 2**13 # 8192
+    elif nesmemtype == 4:  # Palette Memory
+        # it has the background 4 palettes of 4 colors (16) for the background
+        # and the sprites: 32
+        # 5 positions 2**5 -> 0x20
+        mem_length = 2**5 # 32
+
 
     if os.path.isfile(dumpfilename) and (mem_length == filemem_length):
         filename = os.path.split(dumpfilename)[1]  #take away the path
@@ -122,6 +135,8 @@ def nesmem2vhd (dumpfilename,
                 vhdfile.write('    "' + byte_bin_str + '"')
                 if mem_addr < mem_length-1 :
                     vhdfile.write(',')  # the last one dont have comma
+                else:
+                    vhdfile.write(' ') #space
 
                 #vhdfile.write(' --' + str(mem_addr) + ' : ' + str(byte)+'\n')
                 vhdfile.write(' --' + str(mem_addr).rjust(5) + ' - ' )
@@ -328,6 +343,11 @@ nesmem2vhd(dumpfilename = "../examples/dmp/smario_ptable.dmp",
 # creates attribute table (separated)
 nesmem2vhdattr(dumpfilename = "../examples/dmp/smario_ntable01.dmp",
               rom_name = "ROM_ATABLE_SMARIO_01",
+              dest_path = "../examples/vhd/nametables/")
+
+nesmem2vhd(dumpfilename = "../examples/dmp/smario_palette.dmp",
+              nesmemtype = 4, # Palette Memory
+              rom_name = "ROM_PALETTE_SMARIO",
               dest_path = "../examples/vhd/nametables/")
 
 

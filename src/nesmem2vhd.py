@@ -15,6 +15,7 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
                    2: Pattern Table with only one color plane
                    3: Attribute Table (separate from Name table)
                    4: Palette Memory
+                   5: Palette Colors
     entityname  : string with the entity name
     origname    : string with the original memory dump file name
     mem_length  : number of memory positions
@@ -79,7 +80,8 @@ def nesmem2vhd (dumpfilename,
                   nesmemtype = 0,
                   mem_width=8,
                   rom_name = "ROM_NESTABLE",
-                  dest_path = './'):
+                  dest_path = './',
+                  universal_bgcolor = True):
     """
     Takes a binary memory dump file of a NES memory,
     either Name Tables or Pattern Tables
@@ -94,11 +96,15 @@ def nesmem2vhd (dumpfilename,
     nesmemtype   : memory type
                    0: Name Table
                    1: Pattern Table
+                   2: Attribute Table (separated from name table)
+                      not used here but in nesmem2vhdattr
                    4: Palette Memory
-                   5: Palette Colors
+                   5: Palette Colors -- Not used here but in palcolor2vhd
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
+    universal_bgcolor: only for Palette Memories: puts color 0 in all
+                   backgrounds, every 4 memory positions 
     """
 
 
@@ -115,9 +121,9 @@ def nesmem2vhd (dumpfilename,
         # and the sprites: 32
         # 5 positions 2**5 -> 0x20
         mem_length = 2**5 # 32
-    elif nesmemtype == 5:  # Palette Colors
+    #elif nesmemtype == 5:  # Palette Colors # NOT USED HERE
         # it has the background 64 colors in different RGB configurations
-        mem_length = 2**6 # 64 (if RGB in each memory address)
+        #mem_length = 2**6 # 64 (if RGB in each memory address)
 
 
     if os.path.isfile(dumpfilename) and (mem_length == filemem_length):
@@ -134,6 +140,11 @@ def nesmem2vhd (dumpfilename,
             mem_addr = 0;
             while (byte_str := nametablefile.read(1)): 
                 byte = ord(byte_str) #gets the unicode character
+                if nesmemtype == 4 and universal_bgcolor:
+                    if mem_addr == 0 :
+                      byte_bg = byte
+                    elif (mem_addr % 4) == 0:
+                      byte = byte_bg
                 #byte_num = int.from_bytes(byte_str)
                 byte_bin_str = (format(byte,'b')).zfill(8)
                 vhdfile.write('    "' + byte_bin_str + '"')
@@ -412,30 +423,31 @@ def palcolor2vhd (palfilename,
 nesmem2vhd(dumpfilename = "../examples/dmp/smario_ntable01.dmp",
               nesmemtype = 0, # Name Table
               rom_name = "ROM_NTABLE_SMARIO_01",
-              dest_path = "../examples/vhd/nametables/")
+              dest_path = "../examples/vhd/nesrom/smario_start/")
 
 nesmem2vhd(dumpfilename = "../examples/dmp/smario_ptable.dmp",
               nesmemtype = 1, # Pattern Table
               rom_name = "ROM_PTABLE_SMARIO",
-              dest_path = "../examples/vhd/patterntables/")
+              dest_path = "../examples/vhd/nesrom/smario_start/")
 
 # creates attribute table (separated)
 nesmem2vhdattr(dumpfilename = "../examples/dmp/smario_ntable01.dmp",
               rom_name = "ROM_ATABLE_SMARIO_01",
-              dest_path = "../examples/vhd/nametables/")
+              dest_path = "../examples/vhd/nesrom/smario_start/")
 
 nesmem2vhd(dumpfilename = "../examples/dmp/smario_palette.dmp",
               nesmemtype = 4, # Palette Memory
               rom_name = "ROM_PALETTE_SMARIO",
-              dest_path = "../examples/vhd/nametables/")
+              dest_path = "../examples/vhd/nesrom/smario_start/",
+              universal_bgcolor = True)
 
 
 patterntable2vhdsplit (dumpfilename = "../examples/dmp/smario_ptable.dmp",
                        rom_name = "ROM_PTABLE_SMARIO",
-                       dest_path = '../examples/vhd/patterntables/')
+                       dest_path = '../examples/vhd/nesrom/smario_start/')
 
 palcolor2vhd (palfilename = "../examples/dmp/nespalette.pal",
                   mem_width=12,
                   rom_name = "ROM_COLORS",
-                  dest_path = '../examples/vhd/nametables/')
+                  dest_path = '../examples/vhd/nesrom/smario_start/')
 

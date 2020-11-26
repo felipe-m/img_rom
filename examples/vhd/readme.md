@@ -1,5 +1,7 @@
 # Ejemplos VHDL
 
+En el directorio [nesrom](nesrom) hay memorias para hacer gráficos basados en mosaicos (_tile based_)
+
 ## Monstruo (fantasma) del pac-man
 * Imagen de 32x32.
 * 3 memorias, una para cada color

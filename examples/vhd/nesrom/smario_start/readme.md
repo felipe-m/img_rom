@@ -11,4 +11,6 @@
 
 [smario_ptable_1.vhd](smario_ptable_1.vhd): Los mosaicos (tiles), la tabla de patrones de sprites y de fondo. Con el plano de color 1. 4KiB en total
 
+[smario_oam_02.vhd](smario_oam_02.vhd): El estado de la memoria de sprites (OAM) en un momento dado
+
 [nespalette_colors.vhd](nespalette_colors.vhd): Paleta con 64 colores RGB444 de la NES

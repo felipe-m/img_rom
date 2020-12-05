@@ -469,7 +469,7 @@ def palcolor2vhd (palfilename,
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
 
-
+"""
 nesmem2vhd(dumpfilename = "../examples/dmp/smario_ntable01.dmp",
               nesmemtype = 0, # Name Table
               rom_name = "ROM_NTABLE_SMARIO_01",
@@ -506,3 +506,4 @@ palcolor2vhd (palfilename = "../examples/dmp/nespalette.pal",
                   rom_name = "ROM_COLORS",
                   dest_path = '../examples/vhd/nesrom/smario_start/')
 
+"""

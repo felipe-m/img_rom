@@ -37,6 +37,7 @@ architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
   constant table_mem : memostruct := (
                 --    address   :    value 
                 --  dec -  hex  :  dec - hex
+     ------- Name Table 0---------
     "00100100", --    0 -  0x0  :   36 - 0x24
     "00100100", --    1 -  0x1  :   36 - 0x24
     "00100100", --    2 -  0x2  :   36 - 0x24
@@ -997,6 +998,7 @@ architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
     "10110111", --  957 - 0x3bd  :  183 - 0xb7
     "10110110", --  958 - 0x3be  :  182 - 0xb6
     "10110111", --  959 - 0x3bf  :  183 - 0xb7
+        ---- Attribute Table 0----
     "10101010", --  960 - 0x3c0  :  170 - 0xaa
     "10101010", --  961 - 0x3c1  :  170 - 0xaa
     "11101010", --  962 - 0x3c2  :  234 - 0xea
@@ -1061,6 +1063,7 @@ architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
     "00000101", -- 1021 - 0x3fd  :    5 - 0x5
     "00000101", -- 1022 - 0x3fe  :    5 - 0x5
     "00000101", -- 1023 - 0x3ff  :    5 - 0x5
+     ------- Name Table 1---------
     "00100100", -- 1024 - 0x400  :   36 - 0x24
     "00100100", -- 1025 - 0x401  :   36 - 0x24
     "00100100", -- 1026 - 0x402  :   36 - 0x24
@@ -2021,6 +2024,7 @@ architecture BEHAVIORAL of ROM_NTABLE_SMARIO_01 is
     "00100100", -- 1981 - 0x7bd  :   36 - 0x24
     "00100100", -- 1982 - 0x7be  :   36 - 0x24
     "00100100", -- 1983 - 0x7bf  :   36 - 0x24
+        ---- Attribute Table 1----
     "00000000", -- 1984 - 0x7c0  :    0 - 0x0
     "00000000", -- 1985 - 0x7c1  :    0 - 0x0
     "00000000", -- 1986 - 0x7c2  :    0 - 0x0

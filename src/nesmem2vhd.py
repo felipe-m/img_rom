@@ -390,9 +390,13 @@ def patterntable2vhdsplit (dumpfilename,
             plane0 = True  # start in plane 0
             # the 8192 memory positions divided by 16
             #    8 rows with 2 planes
-            for table in [0, 1]: # 0,2: 2 tables: sprites + background
+            for table, pkind in zip([0,1],['Sprite','Background']):
+                 # 0,2: 2 tables: sprites + background
+                vhdfile0.write('          -- ' + pkind + ' pattern Table\n')
+                vhdfile1.write('          -- ' + pkind + ' pattern Table\n')
                 # for range doesnt take the last one: 0 to 255
-                for pat in range(0, 256): # 256 patterns (the last one not taken
+                for pat in range(0, 256): # 256 patterns (in python the last one
+                    # is not taken
                     # 2 color planes
                     for pi, vhdfile in zip([0,1],[vhdfile0, vhdfile1]):
                         for row in range(0, 8):  # 0 to 7: 8 rows, range 
@@ -409,7 +413,10 @@ def patterntable2vhdsplit (dumpfilename,
                             vhdfile.write(' --' + str(addr).rjust(5) + ' - ' )
                             vhdfile.write(hex(addr).rjust(4) + '  :  ')
                             vhdfile.write(str(byte).rjust(3)+' - ')
-                            vhdfile.write(hex(byte).rjust(3)+'\n')
+                            vhdfile.write(hex(byte).rjust(3))
+                            if row == 0:
+                                vhdfile.write(' -- ' + pkind + ' ' + hex(pat))
+                            vhdfile.write('\n')
             for vhdfile in [vhdfile0, vhdfile1]:
                 vhdfile.write('    );\n')
                 vhdfile.write('begin\n')

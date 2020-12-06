@@ -1,4 +1,13 @@
-En carpeta vhd hay ejemplos de ROM en VHDL, en la carpeta img estan los originales
+# Organización del directorio
+
+- [vhd](vhd): ejemplos de ROM en VHDL
+- [img](img): imágenes originales de las ROM de VHDL
+- [nesrom](nesrom): está organizado por juegos, e incluso distintas pantallas, dentro de cada carpeta están las pantallas (como si fuesen capturas de imágenes) donde están las memorias ROM en VHDL. Dento hay otra carpeta dmp donde están las memorias de la NES en binario (que se convierten en ROM en VHDL por el script)
+
+---
+
+# A continuación se muestran algunos ejemplos de memorias ROM en vhd
+
 
 ## Monstruo (fantasma) del pac-man
 * Imagen de 32x32.

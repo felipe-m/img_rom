@@ -3,7 +3,7 @@
 -- https://wiki.nesdev.com/w/index.php/PPU_nametables
 
 
----  Original memory dump file name: smario_ntable01.dmp --
+---  Original memory dump file name: smario_ntable_01.dmp --
 ------ Felipe Machado -----------------------------------
 ------ Area de Tecnologia Electronica -----------
 ------ Universidad Rey Juan Carlos ----------------------

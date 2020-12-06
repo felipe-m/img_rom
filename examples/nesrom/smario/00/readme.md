@@ -1,9 +1,9 @@
 # Memorias ROM similares a las usadas por la NES
 
 
-[smario_ntable01.vhd](smario_ntable01.vhd): Mapa de mosaicos (Tabla de nombres) de 2KiB. Por lo tanto hay dos tablas de 1KiB. Al final de cada tabla están los 64 B de la tabla de atributos
+[smario_ntable01.vhd](smario_ntable_01.vhd): Mapa de mosaicos (Tabla de nombres) de 2KiB. Por lo tanto hay dos tablas de 1KiB. Al final de cada tabla están los 64 B de la tabla de atributos
 
-[smario_ntable01_attr.vhd](smario_ntable01_attr.vhd): Los 64 bytes de la tabla de atributos separados de la tabla de nombres
+[smario_ntable01_attr.vhd](smario_ntable_01_attr.vhd): Los 64 bytes de la tabla de atributos separados de la tabla de nombres
 
 [smario_ptable.vhd](smario_ptable.vhd): Los mosaicos (tiles), la tabla de patrones de sprites y de fondo. Con los dos planos de color. 8KiB en total
 

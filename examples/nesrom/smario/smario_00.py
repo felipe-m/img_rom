@@ -7,39 +7,39 @@ sys.path.append(filepath +  "/../../../src/")
 from nesmem2vhd import nesmem2vhd, nesmem2vhdattr, patterntable2vhdsplit
 from nesmem2vhd import palcolor2vhd
 
-# exec(open("./sprilo_00.py").read())
+# exec(open("./smario_00.py").read())
 
 
 
 nesmem2vhd(dumpfilename = "./00/dmp/smario_ntable_01.dmp",
               nesmemtype = 0, # Name Table
-              rom_name = "ROM_NTABLE_SMARIO_00",
+              rom_name = "ROM_NTABLE_SMARIO_01",
               dest_path = "./00/")
 
-nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ptable.dmp",
+nesmem2vhd(dumpfilename = "./00/dmp/smario_ptable.dmp",
               nesmemtype = 1, # Pattern Table
-              rom_name = "ROM_PTABLE_SPRILO",
+              rom_name = "ROM_PTABLE_SMARIO",
               dest_path = "./00/")
 
-nesmem2vhd(dumpfilename = "./00/dmp/sprilo_oam_00.dmp",
+nesmem2vhd(dumpfilename = "./00/dmp/smario_oam_02.dmp",
               nesmemtype = 6, # OAM
-              rom_name = "ROM_OAM_SPRILO_00",
+              rom_name = "ROM_OAM_SMARIO",
               dest_path = "./00/")
 
 # creates attribute table (separated)
-nesmem2vhdattr(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",
-              rom_name = "ROM_ATABLE_SPRILO_00",
+nesmem2vhdattr(dumpfilename = "./00/dmp/smario_ntable_01.dmp",
+              rom_name = "ROM_ATABLE_SMARIO_01",
               dest_path = "./00/")
 
-nesmem2vhd(dumpfilename = "./00/dmp/sprilo_palette.dmp",
+nesmem2vhd(dumpfilename = "./00/dmp/smario_palette.dmp",
               nesmemtype = 4, # Palette Memory
-              rom_name = "ROM_PALETTE_SPRILO",
+              rom_name = "ROM_PALETTE_SMARIO",
               dest_path = "./00/",
               universal_bgcolor = True)
 
 # creates separate pattern tables into 2 planes
-patterntable2vhdsplit (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
-                       rom_name = "ROM_PTABLE_SPRILO",
+patterntable2vhdsplit (dumpfilename = "./00/dmp/smario_ptable.dmp",
+                       rom_name = "ROM_PTABLE_SMARIO",
                        dest_path = './00/')
 
 # The NES palette is the same for all

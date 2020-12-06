@@ -4,7 +4,7 @@ import math
 # exec(open("./nesmem2vhd.py").read())
 
 
-def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, mem_width):
+def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, mem_width, halfnametable= False):
     """
     Writes the header of the VHDL file
 
@@ -21,14 +21,18 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     origname    : string with the original memory dump file name
     mem_length  : number of memory positions
     mem_width   : number of bits of each memory position
+    halfnametable: only for Name Tables Memories: if true only takes the first
+                  KiB, thus, only the first nametable
 
     """
-    numbits_addr = math.ceil(math.log(mem_length,2))
 
     vhdfile.write('--- Autcmatically generated VHDL ROM from a NES memory file----\n')
     if nesmemtype == 0:  # Name Table
         vhdfile.write('---   NAME TABLE\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_nametables\n')
+        if halfnametable == True:
+            vhdfile.write('--- Only the first Name Table: 1KiB\n')
+            mem_length = 1024
     elif nesmemtype == 1:  # Pattern Table (normal)
         vhdfile.write('---   PATTERN TABLE\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
@@ -45,6 +49,7 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     elif nesmemtype == 6:  # OAM: sprite memory
         vhdfile.write('---   SPRITEs MEMORY (OAM)\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_OAM\n')
+    numbits_addr = math.ceil(math.log(mem_length,2))
     vhdfile.write('\n')
     vhdfile.write('\n')
     vhdfile.write('---  Original memory dump file name: ' + orig_name + ' --\n')
@@ -70,7 +75,8 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     vhdfile.write('    clk  : in  std_logic;   -- clock\n')
     vhdfile.write('    addr : in  std_logic_vector(' + str(numbits_addr) +
                   '-1 downto 0);  --' + str(mem_length) + ' memory positions\n')
-    vhdfile.write('    dout : out std_logic_vector(' + str(mem_width) + '-1 downto 0) -- memory data width\n')
+    vhdfile.write('    dout : out std_logic_vector(' + str(mem_width) +
+                  '-1 downto 0) -- memory data width\n')
     vhdfile.write('  );\n')
     vhdfile.write('end ' + entityname +';')
     vhdfile.write('\n\n')
@@ -86,7 +92,8 @@ def nesmem2vhd (dumpfilename,
                   mem_width=8,
                   rom_name = "ROM_NESTABLE",
                   dest_path = './',
-                  universal_bgcolor = True):
+                  universal_bgcolor = True,
+                  halfnametable = False):
     """
     Takes a binary memory dump file of a NES memory,
       https://wiki.nesdev.com/w/index.php/PPU_nametables
@@ -99,10 +106,11 @@ def nesmem2vhd (dumpfilename,
                    binary file. File extension usually is .dmp
                    2KiB
     nesmemtype   : memory type
-                   0: Name Table
+                   0: Name Table: 2KiB (or 1KiB)
                    1: Pattern Table
                    2: Attribute Table (separated from name table)
                       not used here but in nesmem2vhdattr
+                   3: Attribute Table (separate from Name table)
                    4: Palette Memory
                    5: Palette Colors -- Not used here but in palcolor2vhd
                    6: OAM: Object Attribute Memory: for sprites
@@ -111,13 +119,18 @@ def nesmem2vhd (dumpfilename,
     dest_path    : path of the VHDL file to be created
     universal_bgcolor: only for Palette Memories: puts color 0 in all
                    backgrounds, every 4 memory positions 
+    halfnametable: only for nametables, if True only takes the first nametable
+                  thus 1KiB
     """
 
 
     filemem_length = os.stat(dumpfilename).st_size # number of memory positions
+    mem_length_half = 0
     if nesmemtype == 0 or nesmemtype == 3: # Name Table: 2048 memory positions
         # Attribute table (3) uses a Name Table
         mem_length = 2048   
+        if halfnametable == True:
+            mem_length = int(mem_length/2)
     elif nesmemtype == 1:  # Pattern Table
         # it has the background and the sprites pattern table, 4KiB each
         # 8192 positions 2**13 -> 0x2000
@@ -144,14 +157,19 @@ def nesmem2vhd (dumpfilename,
         mem_length = 2**8 # 256
 
 
-    if os.path.isfile(dumpfilename) and (mem_length == filemem_length):
+    if (os.path.isfile(dumpfilename) and 
+                                         # *2 in case of half table
+        ((mem_length == filemem_length) or (2*mem_length == filemem_length))):
         filename = os.path.split(dumpfilename)[1]  #take away the path
         basefilename = os.path.splitext(filename)[0] #take away extension
-        vhdfilename = dest_path + basefilename + ".vhd"
+        if nesmemtype == 0 and halfnametable == True:
+            vhdfilename = dest_path + basefilename + "_nt0.vhd"
+        else:
+            vhdfilename = dest_path + basefilename + ".vhd"
         vhdfile = open(vhdfilename, 'w')
         # write the header
         write_vhd_header (vhdfile, nesmemtype, rom_name,
-                          filename,mem_length,mem_width)
+                          filename,mem_length,mem_width,halfnametable)
         vhdfile.write('                --    address   :    value \n' )
         vhdfile.write('                --  dec -  hex  :  dec - hex\n')
         with open(dumpfilename,"rb") as nametablefile:
@@ -193,8 +211,18 @@ def nesmem2vhd (dumpfilename,
                 vhdfile.write(hex(mem_addr).rjust(4) + '  :  ')
                 vhdfile.write(str(byte).rjust(3)+' - ')
                 vhdfile.write(hex(byte).rjust(3))
+                # to indicate the line number
+                if nesmemtype == 0: # Name Table
+                    if mem_addr < 960:
+                        if (mem_addr % 32 == 0 ): # each 32 there is a new line
+                            vhdfile.write(' -- line ')
+                            vhdfile.write(hex(int(mem_addr/32)))
+                    elif mem_addr>=1024 and mem_addr < (960+1024):
+                        if (mem_addr-1024) % 32 == 0: # new line
+                            vhdfile.write(' -- line ')
+                            vhdfile.write(hex(int((mem_addr-1024)/32)))
                 # to indicate the pattern number
-                if nesmemtype == 1: # Pattern Table
+                elif nesmemtype == 1: # Pattern Table
                     if (mem_addr % 16 == 0 ): # each 16 there is a pattern 
                         if (mem_addr < 4096):
                             vhdfile.write(' -- Sprite ')
@@ -209,6 +237,8 @@ def nesmem2vhd (dumpfilename,
                         vhdfile.write(hex(int(mem_addr/4)))
                 vhdfile.write('\n')
                 mem_addr += 1
+                if mem_addr >= mem_length:
+                   break; # the case of one name table
             vhdfile.write('    );\n')
             vhdfile.write('begin\n')
             vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
@@ -220,6 +250,7 @@ def nesmem2vhd (dumpfilename,
             vhdfile.write('  end process;\n')
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
+        nametablefile.close()
             
 
 
@@ -288,6 +319,7 @@ def nesmem2vhdattr (dumpfilename,
             vhdfile.write('  end process;\n')
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
+        nametablefile.close()
             
 
 
@@ -391,6 +423,7 @@ def patterntable2vhdsplit (dumpfilename,
                 vhdfile.write('end BEHAVIORAL;\n')
         vhdfile0.close()
         vhdfile1.close()
+        pttablefile.close()
 
 
 def palcolor2vhd (palfilename,
@@ -423,11 +456,11 @@ def palcolor2vhd (palfilename,
                           filename,64,mem_width)
         vhdfile.write('                       --    address   :    value \n' )
         vhdfile.write('                       --  dec -  hex  :  dec - hex(RGB)\n')
-        with open(palfilename,"rb") as nametablefile:
+        with open(palfilename,"rb") as palfile:
             pal_filebyte = 0;
             color = 0;
             mem_addr = 0;
-            while (byte_str := nametablefile.read(1)): 
+            while (byte_str := palfile.read(1)): 
                 if color == 0:  # First byte: RED
                     byte = ord(byte_str) #gets the unicode character
                     nibble_red = int(byte/16); #get only four bits
@@ -468,6 +501,7 @@ def palcolor2vhd (palfilename,
             vhdfile.write('  end process;\n')
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
+        palfile.close()
 
 """
 nesmem2vhd(dumpfilename = "../examples/dmp/smario_ntable01.dmp",

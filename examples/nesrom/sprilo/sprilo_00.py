@@ -16,6 +16,12 @@ nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",
               rom_name = "ROM_NTABLE_SPRILO_00",
               dest_path = "./00/")
 
+nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",
+              nesmemtype = 0, # Name Table
+              rom_name = "ROM_NTABLE0_SPRILO_00", #only nametable 0
+              dest_path = "./00/",
+              halfnametable = True)
+
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ptable.dmp",
               nesmemtype = 1, # Pattern Table
               rom_name = "ROM_PTABLE_SPRILO",

@@ -49,6 +49,9 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     elif nesmemtype == 6:  # OAM: sprite memory
         vhdfile.write('---   SPRITEs MEMORY (OAM)\n')
         vhdfile.write('-- https://wiki.nesdev.com/w/index.php/PPU_OAM\n')
+    # there are other types (background and sprites pattern tables separated)
+    # but in these cases this header will be written on the calling function
+
     numbits_addr = math.ceil(math.log(mem_length,2))
     vhdfile.write('\n')
     vhdfile.write('\n')
@@ -430,6 +433,154 @@ def patterntable2vhdsplit (dumpfilename,
                 vhdfile.write('end BEHAVIORAL;\n')
         vhdfile0.close()
         vhdfile1.close()
+        pttablefile.close()
+
+def patterntable2vhdsplit2 (dumpfilename,
+                            mem_width=8,
+                            rom_name = "ROM_PTABLE",
+                            dest_path = './'):
+              
+    """
+    Takes a binary memory dump file of a NES Patter Tables
+      https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
+      Both Sprites and Background
+      Separates into 4 tables for each plane and for sprites and background
+      and also separates the table for sprites and 
+
+        2 Tables (sprites and background):  1 bit
+      256 patterns                       :  8 bits
+        2 color planes                   :  1 bit
+        8 rows                           :  3 bit
+     -----------------------------------------------
+     8192 total memory                   : 13 bits
+
+     Divided into 4 memories of 2048 addresses -> 11 bits
+
+
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   2KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: VHDL entity name to be created
+    dest_path    : path of the VHDL file to be created
+    """
+
+    mem_length = os.stat(dumpfilename).st_size # number of memory positions
+    # it has the background and the sprites pattern table, 4KiB each
+    # 8192 positions 2**13 -> 0x2000
+    if os.path.isfile(dumpfilename) and (mem_length == 2**13):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        # 2 color maps (memories) and for sprites (spr) and background (bg)
+        vhdfilename_spr0 = dest_path + basefilename + "spr_0.vhd"
+        vhdfilename_spr1 = dest_path + basefilename + "spr_1.vhd"
+        vhdfilename_bg0 = dest_path + basefilename + "bg_0.vhd"
+        vhdfilename_bg1 = dest_path + basefilename + "bg_1.vhd"
+        vhdfile_spr0 = open(vhdfilename_spr0, 'w')
+        vhdfile_spr1 = open(vhdfilename_spr1, 'w')
+        vhdfile_bg0 = open(vhdfilename_bg0, 'w')
+        vhdfile_bg1 = open(vhdfilename_bg1, 'w')
+        # write the header
+        # nesmemtype = 1 #pattern table
+        rom_name_spr0 = rom_name + '_SPR_PLN0'
+        rom_name_spr1 = rom_name + '_SPR_PLN1'
+        rom_name_bg0 = rom_name + '_BG_PLN0'
+        rom_name_bg1 = rom_name + '_BG_PLN1'
+        vhdfile_spr0.write('---   Sprites Pattern table COLOR PLANE 0\n')
+        vhdfile_spr0.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vhdfile_spr1.write('---   Sprites Pattern table COLOR PLANE 1\n')
+        vhdfile_spr1.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vhdfile_bg0.write('---   Background Pattern table COLOR PLANE 0\n')
+        vhdfile_bg0.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vhdfile_bg1.write('---   Background Pattern table COLOR PLANE 1\n')
+        vhdfile_bg1.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        # divide into 4 memories: mem_length/4
+        write_vhd_header (vhdfile    = vhdfile_spr0,
+                          nesmemtype = -1, 
+                          entityname = rom_name_spr0,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width)
+        write_vhd_header (vhdfile    = vhdfile_spr1,
+                          nesmemtype = -1,
+                          entityname = rom_name_spr1,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width)
+        write_vhd_header (vhdfile    = vhdfile_bg0,
+                          nesmemtype = -1, 
+                          entityname = rom_name_bg0,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width)
+        write_vhd_header (vhdfile    = vhdfile_bg1,
+                          nesmemtype = -1,
+                          entityname = rom_name_bg1,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width)
+
+        vhdfile_spr0.write('                --    address   :    value \n' )
+        vhdfile_spr1.write('                --    address   :    value \n' )
+        vhdfile_spr0.write('                --  dec -  hex  :  dec - hex\n')
+        vhdfile_spr1.write('                --  dec -  hex  :  dec - hex\n')
+        vhdfile_bg0.write('                --    address   :    value \n' )
+        vhdfile_bg1.write('                --    address   :    value \n' )
+        vhdfile_bg0.write('                --  dec -  hex  :  dec - hex\n')
+        vhdfile_bg1.write('                --  dec -  hex  :  dec - hex\n')
+
+        with open(dumpfilename,"rb") as pttablefile:
+            mem_addr1 = 0
+            mem_addr2 = 0
+            plane0 = True  # start in plane 0
+            # the 8192 memory positions divided by 16
+            #    8 rows with 2 planes and Sprites and Background
+            # this first for is for dividing into Sprites and Background
+            for table, pkind, (vhdfile0,vhdfile1) in zip(
+                  [0,1],
+                  ['Sprite','Background'],
+                  [[vhdfile_spr0,vhdfile_spr1],[vhdfile_bg0, vhdfile_bg1]]):
+                 # 0,2: 2 tables: sprites + background
+                vhdfile0.write('          -- ')
+                vhdfile0.write(pkind + ' pattern Table COLOR PLANE 0\n')
+                vhdfile1.write('          -- ')
+                vhdfile1.write(pkind + ' pattern Table COLOR PLANE 1\n')
+                # for range doesnt take the last one: 0 to 255
+                for pat in range(0, 256): # 256 patterns (in python the last one
+                    # is not taken
+                    # 2 color planes
+                    for pi, vhdfile in zip([0,1],[vhdfile0, vhdfile1]):
+                        for row in range(0, 8):  # 0 to 7: 8 rows, range 
+                            addr = pat*8 + row
+                            byte_str = pttablefile.read(1)
+                            byte = ord(byte_str) #gets the unicode character
+                            byte_bin_str = (format(byte,'b')).zfill(8)
+                            vhdfile.write('    "' + byte_bin_str + '"')
+                            if not(pat == 255 and row == 7):
+                                vhdfile.write(',') #the last one dont have comma
+                            else:
+                                vhdfile.write(' ') #space
+
+                            vhdfile.write(' --' + str(addr).rjust(5) + ' - ' )
+                            vhdfile.write(hex(addr).rjust(4) + '  :  ')
+                            vhdfile.write(str(byte).rjust(3)+' - ')
+                            vhdfile.write(hex(byte).rjust(3))
+                            if row == 0:
+                                vhdfile.write(' -- ' + pkind + ' ' + hex(pat))
+                            vhdfile.write('\n')
+            for vhdfile in [vhdfile_spr0, vhdfile_spr1,
+                            vhdfile_bg0,  vhdfile_bg1]:
+                vhdfile.write('    );\n')
+                vhdfile.write('begin\n')
+                vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
+                vhdfile.write('  P_ROM: process(clk)\n')
+                vhdfile.write('  begin\n')
+                vhdfile.write("    if clk'event and clk='1' then\n")
+                vhdfile.write('      dout <= table_mem(addr_int);\n')
+                vhdfile.write('    end if;\n')
+                vhdfile.write('  end process;\n')
+                vhdfile.write('end BEHAVIORAL;\n')
+                vhdfile.close()
         pttablefile.close()
 
 

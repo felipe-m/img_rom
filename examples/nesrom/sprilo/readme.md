@@ -30,6 +30,20 @@ https://github.com/cbrwn/gameoff
 
 [sprilo_ptable_1.vhd](00/sprilo_ptable_1.vhd): Los mosaicos (tiles), la tabla de patrones de sprites y de fondo. Con el plano de color 1. 4KiB en total
 
+[sprilo_ptablespr.vhd](00/sprilo_ptablespr.vhd): Los mosaicos (tiles), la tabla de patrones de sprites (sin fondo). Con los dos planos de color. 4KiB en total
+
+[sprilo_ptablebg.vhd](00/sprilo_ptablebg.vhd): Los mosaicos (tiles), la tabla de patrones de fondo (sin sprites). Con los dos planos de color. 4KiB en total
+
+[sprilo_ptablespr_0.vhd](00/sprilo_ptablespr_0.vhd): Los mosaicos (tiles), la tabla de patrones de sprites (sin fondo). Con el plano de color 0. 2KiB en total
+
+[sprilo_ptablespr_1.vhd](00/sprilo_ptablespr_1.vhd): Los mosaicos (tiles), la tabla de patrones de sprites (sin fondo). Con el plano de color 1. 2KiB en total
+
+[sprilo_ptablebg_0.vhd](00/sprilo_ptablebg_0.vhd): Los mosaicos (tiles), la tabla de patrones de fondo (sin sprites). Con el plano de color 0. 2KiB en total
+
+[sprilo_ptablebg_1.vhd](00/sprilo_ptablebg_1.vhd): Los mosaicos (tiles), la tabla de patrones de fondo (sin sprites). Con el plano de color 1. 2KiB en total
+
+
+
 [sprilo_oam_00.vhd](00/sprilo_oam_00.vhd): El estado de la memoria de sprites (OAM) en un momento dado
 
 [nespalette_colors.vhd](../nespalette_colors.vhd): Paleta con 64 colores RGB444 de la NES

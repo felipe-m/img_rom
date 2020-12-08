@@ -349,7 +349,7 @@ def patterntable2vhdsplit (dumpfilename,
 
     dumpfilename : name of the memory dump file (includes path and extension)
                    binary file. File extension usually is .dmp
-                   2KiB
+                   8KiB
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
@@ -388,9 +388,6 @@ def patterntable2vhdsplit (dumpfilename,
         vhdfile0.write('                --  dec -  hex  :  dec - hex\n')
         vhdfile1.write('                --  dec -  hex  :  dec - hex\n')
         with open(dumpfilename,"rb") as pttablefile:
-            mem_addr1 = 0
-            mem_addr2 = 0
-            plane0 = True  # start in plane 0
             # the 8192 memory positions divided by 16
             #    8 rows with 2 planes
             for table, pkind in zip([0,1],['Sprite','Background']):
@@ -435,6 +432,126 @@ def patterntable2vhdsplit (dumpfilename,
         vhdfile1.close()
         pttablefile.close()
 
+def patterntable2vhdsplit_spr_bg (dumpfilename,
+                            mem_width=8,
+                            rom_name = "ROM_PTABLE",
+                            dest_path = './'):
+              
+    """
+    Takes a binary memory dump file of a NES Patter Tables
+      https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
+      Both Sprites and Background
+      Separates Sprites and background into 2 tables 
+      color planes are kept in the same table
+
+        2 Tables (sprites and background):  1 bit
+      256 patterns                       :  8 bits
+        2 color planes                   :  1 bit
+        8 rows                           :  3 bit
+     -----------------------------------------------
+     8192 total memory                   : 13 bits
+
+     Divided into 2 memories of 4096 addresses -> 12 bits
+
+
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   8KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: VHDL entity name to be created
+    dest_path    : path of the VHDL file to be created
+    """
+
+    mem_length = os.stat(dumpfilename).st_size # number of memory positions
+    # it has the background and the sprites pattern table, 4KiB each
+    # 8192 positions 2**13 -> 0x2000
+    if os.path.isfile(dumpfilename) and (mem_length == 2**13):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        vhdfilename_spr = dest_path + basefilename + "spr.vhd"
+        vhdfilename_bg = dest_path + basefilename + "bg.vhd"
+        vhdfile_spr = open(vhdfilename_spr, 'w')
+        vhdfile_bg = open(vhdfilename_bg, 'w')
+        # write the header
+        # nesmemtype = 1 #pattern table
+        rom_name_spr = rom_name + '_SPR'
+        rom_name_bg = rom_name + '_BG'
+        vhdfile_spr.write('---   Sprites Pattern table BOTH COLOR PLANES\n')
+        vhdfile_spr.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vhdfile_bg.write('---   Background Pattern table BOTH COLOR PLANES\n')
+        vhdfile_bg.write('-- https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        # divide into 2 memories: mem_length/2
+        write_vhd_header (vhdfile    = vhdfile_spr,
+                          nesmemtype = -1, # not defined
+                          entityname = rom_name_spr,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/2),
+                          mem_width  = mem_width)
+        write_vhd_header (vhdfile    = vhdfile_bg,
+                          nesmemtype = -1, 
+                          entityname = rom_name_bg,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/2),
+                          mem_width  = mem_width)
+
+        vhdfile_spr.write('                --    address   :    value \n' )
+        vhdfile_spr.write('                --  dec -  hex  :  dec - hex\n')
+        vhdfile_bg.write('                --    address   :    value \n' )
+        vhdfile_bg.write('                --  dec -  hex  :  dec - hex\n')
+
+        with open(dumpfilename,"rb") as pttablefile:
+            # the 8192 memory positions divided by 16
+            #    8 rows with 2 planes and Sprites and Background
+            # this first for is for dividing into Sprites and Background
+            for table, pkind, vhdfile in zip(
+                  [0,1],
+                  ['Sprite','Background'],
+                  [vhdfile_spr, vhdfile_bg]):
+                 # 0,2: 2 tables: sprites + background
+                vhdfile.write('          -- ')
+                vhdfile.write(pkind + ' pattern Table both color planes\n')
+                # for range doesnt take the last one: 0 to 255
+                for pat in range(0, 256): # 256 patterns (in python the last one
+                    # is not taken
+                    # 2 color planes
+                    for pi in [0,1]:
+                        for row in range(0, 8):  # 0 to 7: 8 rows, range 
+                            addr = pat*16 + pi*8 + row
+                            byte_str = pttablefile.read(1)
+                            byte = ord(byte_str) #gets the unicode character
+                            byte_bin_str = (format(byte,'b')).zfill(8)
+                            vhdfile.write('    "' + byte_bin_str + '"')
+                            if not(pat == 255 and row == 7 and pi == 1):
+                                vhdfile.write(',') #the last one dont have comma
+                            else:
+                                vhdfile.write(' ') #space
+
+                            vhdfile.write(' --' + str(addr).rjust(5) + ' - ' )
+                            vhdfile.write(hex(addr).rjust(4) + '  :  ')
+                            vhdfile.write(str(byte).rjust(3)+' - ')
+                            vhdfile.write(hex(byte).rjust(3))
+                            if row == 0:
+                                if pi == 0:
+                                    vhdfile.write(' -- ' +pkind+ ' ' + hex(pat))
+                                else:
+                                    vhdfile.write(' -- plane 1')
+                            vhdfile.write('\n')
+            for vhdfile in [vhdfile_spr, vhdfile_bg]:
+                vhdfile.write('    );\n')
+                vhdfile.write('begin\n')
+                vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
+                vhdfile.write('  P_ROM: process(clk)\n')
+                vhdfile.write('  begin\n')
+                vhdfile.write("    if clk'event and clk='1' then\n")
+                vhdfile.write('      dout <= table_mem(addr_int);\n')
+                vhdfile.write('    end if;\n')
+                vhdfile.write('  end process;\n')
+                vhdfile.write('end BEHAVIORAL;\n')
+                vhdfile.close()
+        pttablefile.close()
+
+
+
 def patterntable2vhdsplit2 (dumpfilename,
                             mem_width=8,
                             rom_name = "ROM_PTABLE",
@@ -459,7 +576,7 @@ def patterntable2vhdsplit2 (dumpfilename,
 
     dumpfilename : name of the memory dump file (includes path and extension)
                    binary file. File extension usually is .dmp
-                   2KiB
+                   8KiB
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
@@ -530,9 +647,6 @@ def patterntable2vhdsplit2 (dumpfilename,
         vhdfile_bg1.write('                --  dec -  hex  :  dec - hex\n')
 
         with open(dumpfilename,"rb") as pttablefile:
-            mem_addr1 = 0
-            mem_addr2 = 0
-            plane0 = True  # start in plane 0
             # the 8192 memory positions divided by 16
             #    8 rows with 2 planes and Sprites and Background
             # this first for is for dividing into Sprites and Background

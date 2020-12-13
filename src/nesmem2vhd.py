@@ -4,7 +4,7 @@ import math
 # exec(open("./nesmem2vhd.py").read())
 
 
-def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, mem_width, halfnametable= False):
+def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, mem_width, halfnametable= False, clk=True):
     """
     Writes the header of the VHDL file
 
@@ -23,6 +23,7 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     mem_width   : number of bits of each memory position
     halfnametable: only for Name Tables Memories: if true only takes the first
                   KiB, thus, only the first nametable
+    clk         : If false creates a combinatorial memory without clock
 
     """
 
@@ -61,13 +62,27 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     vhdfile.write('------ Universidad Rey Juan Carlos ----------------------\n')
     vhdfile.write('------ https://github.com/felipe-m ----------------------\n')
     vhdfile.write('---------------------------------------------------------\n')
+
+    if clk==True:
+        vhdfile.write('----- Memory with clock ------\n')
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        vhdfile.write('----- Memory without clock -----\n')
+        # commented clk sentence
+        clkcmt ='--'
+    
     vhdfile.write('\n')
     vhdfile.write('----- Ports ---------------------------------------------\n')
     vhdfile.write('-- Inputs   ---------------------------------------------\n')
-    vhdfile.write('--    clk  :  clock signal\n')
+    vhdfile.write('--   ' + clkcmt + ' clk  :  clock signal\n')
     vhdfile.write('--    addr :  memory address\n')
     vhdfile.write('-- Salidas  ---------------------------------------------\n')
-    vhdfile.write('--    dout :  memory data out (a clock cycle later)\n')
+    vhdfile.write('--    dout :  memory data out ')
+    if clk==True:
+        vhdfile.write(' (a clock cycle later)\n')
+    else:
+        vhdfile.write(' (no clock: in the same clock cycle)\n')
     vhdfile.write('\n\n')
     vhdfile.write('library IEEE;\n')
     vhdfile.write('  use IEEE.STD_LOGIC_1164.ALL;\n')
@@ -75,7 +90,7 @@ def write_vhd_header (vhdfile, nesmemtype, entityname, orig_name, mem_length, me
     vhdfile.write('\n\n')
     vhdfile.write('entity ' + entityname + ' is\n')
     vhdfile.write('  port (\n')
-    vhdfile.write('    clk  : in  std_logic;   -- clock\n')
+    vhdfile.write('    ' + clkcmt + 'clk  : in  std_logic;   -- clock\n')
     vhdfile.write('    addr : in  std_logic_vector(' + str(numbits_addr) +
                   '-1 downto 0);  --' + str(mem_length) + ' memory positions\n')
     vhdfile.write('    dout : out std_logic_vector(' + str(mem_width) +
@@ -96,7 +111,8 @@ def nesmem2vhd (dumpfilename,
                   rom_name = "ROM_NESTABLE",
                   dest_path = './',
                   universal_bgcolor = True,
-                  halfnametable = False):
+                  halfnametable = False,
+                  clk = True):
     """
     Takes a binary memory dump file of a NES memory,
       https://wiki.nesdev.com/w/index.php/PPU_nametables
@@ -124,6 +140,7 @@ def nesmem2vhd (dumpfilename,
                    backgrounds, every 4 memory positions 
     halfnametable: only for nametables, if True only takes the first nametable
                   thus 1KiB
+    clk         : If false creates a combinatorial memory without clock
     """
 
 
@@ -159,6 +176,12 @@ def nesmem2vhd (dumpfilename,
         # 256 bytes (FF)
         mem_length = 2**8 # 256
 
+    if clk==True:
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        # commented clk sentence
+        clkcmt ='--'
 
     if (os.path.isfile(dumpfilename) and 
                                          # *2 in case of half table
@@ -172,7 +195,7 @@ def nesmem2vhd (dumpfilename,
         vhdfile = open(vhdfilename, 'w')
         # write the header
         write_vhd_header (vhdfile, nesmemtype, rom_name,
-                          filename,mem_length,mem_width,halfnametable)
+                          filename,mem_length,mem_width,halfnametable, clk)
         vhdfile.write('                --    address   :    value \n' )
         vhdfile.write('                --  dec -  hex  :  dec - hex\n')
         with open(dumpfilename,"rb") as nametablefile:
@@ -245,12 +268,14 @@ def nesmem2vhd (dumpfilename,
             vhdfile.write('    );\n')
             vhdfile.write('begin\n')
             vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
-            vhdfile.write('  P_ROM: process(clk)\n')
-            vhdfile.write('  begin\n')
-            vhdfile.write("    if clk'event and clk='1' then\n")
+
+            vhdfile.write('  ' + clkcmt + 'P_ROM: process(clk)\n')
+            vhdfile.write('  ' + clkcmt + 'begin\n')
+            vhdfile.write("  " + clkcmt + "  if clk'event and clk='1' then\n")
             vhdfile.write('      dout <= table_mem(addr_int);\n')
-            vhdfile.write('    end if;\n')
-            vhdfile.write('  end process;\n')
+            vhdfile.write('  ' + clkcmt + '  end if;\n')
+            vhdfile.write('  ' + clkcmt + 'end process;\n')
+
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
         nametablefile.close()
@@ -261,7 +286,8 @@ def nesmem2vhd (dumpfilename,
 def nesmem2vhdattr (dumpfilename,
                     mem_width=8,
                     rom_name = "ROM_NESTABLE",
-                    dest_path = './'):
+                    dest_path = './',
+                    clk = True):
     """
     Takes a binary memory dump file of a NES memory,
     takes a Name Tables but only converts the attribute table
@@ -272,8 +298,15 @@ def nesmem2vhdattr (dumpfilename,
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
+    clk          : If false creates a combinatorial memory without clock
     """
 
+    if clk==True:
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        # commented clk sentence
+        clkcmt ='--'
 
     filemem_length = os.stat(dumpfilename).st_size # number of memory positions
     mem_length = 2048   
@@ -286,7 +319,7 @@ def nesmem2vhdattr (dumpfilename,
         vhdfile = open(vhdfilename, 'w')
         # write the header
         write_vhd_header (vhdfile, 3, rom_name, # 3 Attribute table
-                          filename,attrmem_length,mem_width)
+                          filename,attrmem_length,mem_width, clk=clk)
         vhdfile.write('                --    address   :    value \n' )
         vhdfile.write('                --  dec -  hex  :  dec - hex\n')
         with open(dumpfilename,"rb") as nametablefile:
@@ -314,12 +347,14 @@ def nesmem2vhdattr (dumpfilename,
             vhdfile.write('    );\n')
             vhdfile.write('begin\n')
             vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
-            vhdfile.write('  P_ROM: process(clk)\n')
-            vhdfile.write('  begin\n')
-            vhdfile.write("    if clk'event and clk='1' then\n")
+
+            vhdfile.write('  ' + clkcmt + 'P_ROM: process(clk)\n')
+            vhdfile.write('  ' + clkcmt + 'begin\n')
+            vhdfile.write("  " + clkcmt + "  if clk'event and clk='1' then\n")
             vhdfile.write('      dout <= table_mem(addr_int);\n')
-            vhdfile.write('    end if;\n')
-            vhdfile.write('  end process;\n')
+            vhdfile.write('  ' + clkcmt + '  end if;\n')
+            vhdfile.write('  ' + clkcmt + 'end process;\n')
+
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
         nametablefile.close()
@@ -329,7 +364,8 @@ def nesmem2vhdattr (dumpfilename,
 def patterntable2vhdsplit (dumpfilename,
                            mem_width=8,
                            rom_name = "ROM_PTABLE",
-                           dest_path = './'):
+                           dest_path = './',
+                           clk = True):
               
     """
     Takes a binary memory dump file of a NES Patter Tables
@@ -353,7 +389,15 @@ def patterntable2vhdsplit (dumpfilename,
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
+    clk          : If false creates a combinatorial memory without clock
     """
+
+    if clk==True:
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        # commented clk sentence
+        clkcmt ='--'
 
     mem_length = os.stat(dumpfilename).st_size # number of memory positions
     # it has the background and the sprites pattern table, 4KiB each
@@ -376,13 +420,15 @@ def patterntable2vhdsplit (dumpfilename,
                           entityname = rom_name0,
                           orig_name  = filename,
                           mem_length = int(mem_length/2),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
         write_vhd_header (vhdfile    = vhdfile1,
                           nesmemtype = 2,
                           entityname = rom_name1,
                           orig_name  = filename,
                           mem_length = int(mem_length/2),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
         vhdfile0.write('                --    address   :    value \n' )
         vhdfile1.write('                --    address   :    value \n' )
         vhdfile0.write('                --  dec -  hex  :  dec - hex\n')
@@ -421,12 +467,14 @@ def patterntable2vhdsplit (dumpfilename,
                 vhdfile.write('    );\n')
                 vhdfile.write('begin\n')
                 vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
-                vhdfile.write('  P_ROM: process(clk)\n')
-                vhdfile.write('  begin\n')
-                vhdfile.write("    if clk'event and clk='1' then\n")
+
+                vhdfile.write('  ' + clkcmt + 'P_ROM: process(clk)\n')
+                vhdfile.write('  ' + clkcmt + 'begin\n')
+                vhdfile.write("  " +clkcmt+ "  if clk'event and clk='1' then\n")
                 vhdfile.write('      dout <= table_mem(addr_int);\n')
-                vhdfile.write('    end if;\n')
-                vhdfile.write('  end process;\n')
+                vhdfile.write('  ' + clkcmt + '  end if;\n')
+                vhdfile.write('  ' + clkcmt + 'end process;\n')
+
                 vhdfile.write('end BEHAVIORAL;\n')
         vhdfile0.close()
         vhdfile1.close()
@@ -435,7 +483,8 @@ def patterntable2vhdsplit (dumpfilename,
 def patterntable2vhdsplit_spr_bg (dumpfilename,
                             mem_width=8,
                             rom_name = "ROM_PTABLE",
-                            dest_path = './'):
+                            dest_path = './',
+                            clk = True):
               
     """
     Takes a binary memory dump file of a NES Patter Tables
@@ -460,7 +509,15 @@ def patterntable2vhdsplit_spr_bg (dumpfilename,
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
+    clk          : If false creates a combinatorial memory without clock
     """
+
+    if clk==True:
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        # commented clk sentence
+        clkcmt ='--'
 
     mem_length = os.stat(dumpfilename).st_size # number of memory positions
     # it has the background and the sprites pattern table, 4KiB each
@@ -486,13 +543,15 @@ def patterntable2vhdsplit_spr_bg (dumpfilename,
                           entityname = rom_name_spr,
                           orig_name  = filename,
                           mem_length = int(mem_length/2),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
         write_vhd_header (vhdfile    = vhdfile_bg,
                           nesmemtype = -1, 
                           entityname = rom_name_bg,
                           orig_name  = filename,
                           mem_length = int(mem_length/2),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
 
         vhdfile_spr.write('                --    address   :    value \n' )
         vhdfile_spr.write('                --  dec -  hex  :  dec - hex\n')
@@ -540,12 +599,14 @@ def patterntable2vhdsplit_spr_bg (dumpfilename,
                 vhdfile.write('    );\n')
                 vhdfile.write('begin\n')
                 vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
-                vhdfile.write('  P_ROM: process(clk)\n')
-                vhdfile.write('  begin\n')
-                vhdfile.write("    if clk'event and clk='1' then\n")
+
+                vhdfile.write('  ' + clkcmt + 'P_ROM: process(clk)\n')
+                vhdfile.write('  ' + clkcmt + 'begin\n')
+                vhdfile.write("  " +clkcmt+ "  if clk'event and clk='1' then\n")
                 vhdfile.write('      dout <= table_mem(addr_int);\n')
-                vhdfile.write('    end if;\n')
-                vhdfile.write('  end process;\n')
+                vhdfile.write('  ' + clkcmt + '  end if;\n')
+                vhdfile.write('  ' + clkcmt + 'end process;\n')
+
                 vhdfile.write('end BEHAVIORAL;\n')
                 vhdfile.close()
         pttablefile.close()
@@ -555,7 +616,8 @@ def patterntable2vhdsplit_spr_bg (dumpfilename,
 def patterntable2vhdsplit2 (dumpfilename,
                             mem_width=8,
                             rom_name = "ROM_PTABLE",
-                            dest_path = './'):
+                            dest_path = './',
+                            clk = True):
               
     """
     Takes a binary memory dump file of a NES Patter Tables
@@ -580,7 +642,15 @@ def patterntable2vhdsplit2 (dumpfilename,
     mem_width    : NES memory width is 8 bits
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
+    clk          : If false creates a combinatorial memory without clock
     """
+
+    if clk==True:
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        # commented clk sentence
+        clkcmt ='--'
 
     mem_length = os.stat(dumpfilename).st_size # number of memory positions
     # it has the background and the sprites pattern table, 4KiB each
@@ -617,25 +687,29 @@ def patterntable2vhdsplit2 (dumpfilename,
                           entityname = rom_name_spr0,
                           orig_name  = filename,
                           mem_length = int(mem_length/4),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
         write_vhd_header (vhdfile    = vhdfile_spr1,
                           nesmemtype = -1,
                           entityname = rom_name_spr1,
                           orig_name  = filename,
                           mem_length = int(mem_length/4),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
         write_vhd_header (vhdfile    = vhdfile_bg0,
                           nesmemtype = -1, 
                           entityname = rom_name_bg0,
                           orig_name  = filename,
                           mem_length = int(mem_length/4),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
         write_vhd_header (vhdfile    = vhdfile_bg1,
                           nesmemtype = -1,
                           entityname = rom_name_bg1,
                           orig_name  = filename,
                           mem_length = int(mem_length/4),
-                          mem_width  = mem_width)
+                          mem_width  = mem_width,
+                          clk        = clk)
 
         vhdfile_spr0.write('                --    address   :    value \n' )
         vhdfile_spr1.write('                --    address   :    value \n' )
@@ -687,12 +761,14 @@ def patterntable2vhdsplit2 (dumpfilename,
                 vhdfile.write('    );\n')
                 vhdfile.write('begin\n')
                 vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
-                vhdfile.write('  P_ROM: process(clk)\n')
-                vhdfile.write('  begin\n')
-                vhdfile.write("    if clk'event and clk='1' then\n")
+
+                vhdfile.write('  ' + clkcmt + 'P_ROM: process(clk)\n')
+                vhdfile.write('  ' + clkcmt + 'begin\n')
+                vhdfile.write("  " +clkcmt+ "  if clk'event and clk='1' then\n")
                 vhdfile.write('      dout <= table_mem(addr_int);\n')
-                vhdfile.write('    end if;\n')
-                vhdfile.write('  end process;\n')
+                vhdfile.write('  ' + clkcmt + '  end if;\n')
+                vhdfile.write('  ' + clkcmt + 'end process;\n')
+
                 vhdfile.write('end BEHAVIORAL;\n')
                 vhdfile.close()
         pttablefile.close()
@@ -701,7 +777,8 @@ def patterntable2vhdsplit2 (dumpfilename,
 def palcolor2vhd (palfilename,
                   mem_width=12,
                   rom_name = "ROM_COLORS",
-                  dest_path = './'):
+                  dest_path = './',
+                  clk = True):
     """
     Takes a binary palette file and converts to VHDL ROM
 
@@ -712,11 +789,19 @@ def palcolor2vhd (palfilename,
     mem_width    : memory width is 12 bits (4x3) can be different
     rom_name     : string: VHDL entity name to be created
     dest_path    : path of the VHDL file to be created
+    clk          : If false creates a combinatorial memory without clock
     """
 
 
     filemem_length = os.stat(palfilename).st_size # number of memory positions
     mem_length = 192   
+
+    if clk==True:
+        # empty text, so no comment
+        clkcmt =''
+    else:
+        # commented clk sentence
+        clkcmt ='--'
 
     if os.path.isfile(palfilename) and (mem_length == filemem_length):
         filename = os.path.split(palfilename)[1]  #take away the path
@@ -725,7 +810,7 @@ def palcolor2vhd (palfilename,
         vhdfile = open(vhdfilename, 'w')
         # write the header
         write_vhd_header (vhdfile, 5, rom_name, # 3 ROM COLORS
-                          filename,64,mem_width)
+                          filename,64,mem_width, clk=clk)
         vhdfile.write('                       --    address   :    value \n' )
         vhdfile.write('                       --  dec -  hex  :  dec - hex(RGB)\n')
         with open(palfilename,"rb") as palfile:
@@ -765,12 +850,14 @@ def palcolor2vhd (palfilename,
             vhdfile.write('    );\n')
             vhdfile.write('begin\n')
             vhdfile.write('  addr_int <= to_integer(unsigned(addr));\n')
-            vhdfile.write('  P_ROM: process(clk)\n')
-            vhdfile.write('  begin\n')
-            vhdfile.write("    if clk'event and clk='1' then\n")
+
+            vhdfile.write('  ' + clkcmt + 'P_ROM: process(clk)\n')
+            vhdfile.write('  ' + clkcmt + 'begin\n')
+            vhdfile.write("  " + clkcmt + "  if clk'event and clk='1' then\n")
             vhdfile.write('      dout <= table_mem(addr_int);\n')
-            vhdfile.write('    end if;\n')
-            vhdfile.write('  end process;\n')
+            vhdfile.write('  ' + clkcmt + '  end if;\n')
+            vhdfile.write('  ' + clkcmt + 'end process;\n')
+
             vhdfile.write('end BEHAVIORAL;\n')
         vhdfile.close()
         palfile.close()

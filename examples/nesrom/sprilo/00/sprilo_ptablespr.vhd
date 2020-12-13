@@ -9,13 +9,14 @@
 ------ Universidad Rey Juan Carlos ----------------------
 ------ https://github.com/felipe-m ----------------------
 ---------------------------------------------------------
+----- Memory without clock -----
 
 ----- Ports ---------------------------------------------
 -- Inputs   ---------------------------------------------
---    clk  :  clock signal
+--   -- clk  :  clock signal
 --    addr :  memory address
 -- Salidas  ---------------------------------------------
---    dout :  memory data out (a clock cycle later)
+--    dout :  memory data out  (no clock: in the same clock cycle)
 
 
 library IEEE;
@@ -25,7 +26,7 @@ library IEEE;
 
 entity ROM_PTABLE_SPRILO_SPR is
   port (
-    clk  : in  std_logic;   -- clock
+    --clk  : in  std_logic;   -- clock
     addr : in  std_logic_vector(12-1 downto 0);  --4096 memory positions
     dout : out std_logic_vector(8-1 downto 0) -- memory data width
   );
@@ -4137,10 +4138,10 @@ architecture BEHAVIORAL of ROM_PTABLE_SPRILO_SPR is
     );
 begin
   addr_int <= to_integer(unsigned(addr));
-  P_ROM: process(clk)
-  begin
-    if clk'event and clk='1' then
+  --P_ROM: process(clk)
+  --begin
+  --  if clk'event and clk='1' then
       dout <= table_mem(addr_int);
-    end if;
-  end process;
+  --  end if;
+  --end process;
 end BEHAVIORAL;

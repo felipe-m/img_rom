@@ -7,7 +7,7 @@ sys.path.append(filepath +  "/../../../src/")
 from nesmem2vrl import nesmem2vrl, nesmem2vrlattr
 from nesmem2vrl import patterntable2vrlsplit
 #from nesmem2vrl import patterntable2vrlsplit, patterntable2vrlsplit2
-#from nesmem2vrl import patterntable2vrlsplit_spr_bg
+from nesmem2vrl import patterntable2vrlsplit_spr_bg
 #from nesmem2vrl import palcolor2vrl
 
 # exec(open("./sprilo_00_vrl.py").read())
@@ -66,14 +66,14 @@ patterntable2vrlsplit (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                        rom_name = "ROM_PTABLE_SPRILO",
                        dest_path = "./00/vrl/"+cpath,
                        clk = clk)
-"""
 
 # creates separate pattern tables into sprites and background
 # Total of 2 memories
 patterntable2vrlsplit_spr_bg (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                         rom_name = "ROM_PTABLE_SPRILO",
-                        dest_path = './00/',
+                        dest_path = "./00/vrl/"+cpath,
                         clk = clk)
+"""
 
 
 # creates separate pattern tables into 2 planes

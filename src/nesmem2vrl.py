@@ -466,3 +466,132 @@ def patterntable2vrlsplit (dumpfilename,
 
 
 
+
+def patterntable2vrlsplit_spr_bg (dumpfilename,
+                            mem_width=8,
+                            rom_name = "ROM_PTABLE",
+                            dest_path = './',
+                            clk = True):
+              
+    """
+    Takes a binary memory dump file of a NES Patter Tables
+      https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
+      Both Sprites and Background
+      Separates Sprites and background into 2 tables 
+      color planes are kept in the same table
+
+        2 Tables (sprites and background):  1 bit
+      256 patterns                       :  8 bits
+        2 color planes                   :  1 bit
+        8 rows                           :  3 bit
+     -----------------------------------------------
+     8192 total memory                   : 13 bits
+
+     Divided into 2 memories of 4096 addresses -> 12 bits
+
+
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   8KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: verilog module name to be created
+    dest_path    : path of the verilog file to be created
+    clk          : If false creates a combinatorial memory without clock
+    """
+
+    if clk==True:
+        assign = ': dout <= '
+    else:
+        assign = ': dout  = '
+
+
+    mem_length = os.stat(dumpfilename).st_size # number of memory positions
+    # divided by 2
+    numbits_addr = math.ceil(math.log(mem_length/2,2))
+    hexdig_addr = math.ceil(numbits_addr/4) # how manyhex digits has the address
+    # it has the background and the sprites pattern table, 4KiB each
+    # 8192 positions 2**13 -> 0x2000
+    if os.path.isfile(dumpfilename) and (mem_length == 2**13):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        vrlfilename_spr = dest_path + basefilename + "spr.v"
+        vrlfilename_bg = dest_path + basefilename + "bg.v"
+        vrlfile_spr = open(vrlfilename_spr, 'w')
+        vrlfile_bg = open(vrlfilename_bg, 'w')
+        # write the header
+        # nesmemtype = 1 #pattern table
+        rom_name_spr = rom_name + '_SPR'
+        rom_name_bg = rom_name + '_BG'
+        vrlfile_spr.write('//-   Sprites Pattern table BOTH COLOR PLANES\n')
+        vrlfile_spr.write('// https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vrlfile_bg.write('//-   Background Pattern table BOTH COLOR PLANES\n')
+        vrlfile_bg.write('// https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        # divide into 2 memories: mem_length/2
+        write_vrl_header (vrlfile    = vrlfile_spr,
+                          nesmemtype = -1, # not defined
+                          modulename = rom_name_spr,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/2),
+                          mem_width  = mem_width,
+                          clk        = clk)
+        write_vrl_header (vrlfile    = vrlfile_bg,
+                          nesmemtype = -1, 
+                          modulename = rom_name_bg,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/2),
+                          mem_width  = mem_width,
+                          clk        = clk)
+
+        vrlfile_spr.write('                               //  address:   value \n' )
+        vrlfile_spr.write('                               //    dec  : dec - hex\n')
+        vrlfile_bg.write('                               //  address:   value \n' )
+        vrlfile_bg.write('                               //    dec  : dec - hex\n')
+
+        with open(dumpfilename,"rb") as pttablefile:
+            # the 8192 memory positions divided by 16
+            #    8 rows with 2 planes and Sprites and Background
+            # this first for is for dividing into Sprites and Background
+            for table, pkind, vrlfile in zip(
+                  [0,1],
+                  ['Sprite','Background'],
+                  [vrlfile_spr, vrlfile_bg]):
+                 # 0,2: 2 tables: sprites + background
+                vrlfile.write('          // ')
+                vrlfile.write(pkind + ' pattern Table both color planes\n')
+                # for range doesnt take the last one: 0 to 255
+                for pat in range(0, 256): # 256 patterns (in python the last one
+                    # is not taken
+                    # 2 color planes
+                    for pi in [0,1]:
+                        for row in range(0, 8):  # 0 to 7: 8 rows, range 
+                            addr = pat*16 + pi*8 + row
+                            byte_str = pttablefile.read(1)
+                            byte = ord(byte_str) #gets the unicode character
+                            byte_bin_str = (format(byte,'b')).zfill(8)
+
+                            vrlfile.write("      " + str(numbits_addr))
+                            vrlfile.write("'h"+format(addr,'X'))
+                            vrlfile.write(assign + str(mem_width) + "'b" +byte_bin_str)
+
+                            # to have the address in dec and hex, and the values
+                            vrlfile.write('; //' + str(addr).rjust(5) + ' : ' )
+                            vrlfile.write(str(byte).rjust(3)+' - ')
+                            vrlfile.write(hex(byte).rjust(3))
+
+
+                            if row == 0:
+                                if pi == 0:
+                                    vrlfile.write(' -- ' +pkind+ ' ' + hex(pat))
+                                else:
+                                    vrlfile.write(' -- plane 1')
+                            vrlfile.write('\n')
+            for vrlfile in [vrlfile_spr, vrlfile_bg]:
+
+                vrlfile.write('    endcase\n')
+                vrlfile.write('  end\n\n')
+                vrlfile.write('endmodule\n')
+                vrlfile.close()
+        pttablefile.close()
+
+
+

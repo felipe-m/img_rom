@@ -5,8 +5,7 @@ import math
 filepath = os.getcwd()
 sys.path.append(filepath +  "/../../../src/")
 from nesmem2vrl import nesmem2vrl, nesmem2vrlattr
-from nesmem2vrl import patterntable2vrlsplit
-#from nesmem2vrl import patterntable2vrlsplit, patterntable2vrlsplit2
+from nesmem2vrl import patterntable2vrlsplit, patterntable2vrlsplit2
 from nesmem2vrl import patterntable2vrlsplit_spr_bg
 #from nesmem2vrl import palcolor2vrl
 
@@ -73,7 +72,6 @@ patterntable2vrlsplit_spr_bg (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                         rom_name = "ROM_PTABLE_SPRILO",
                         dest_path = "./00/vrl/"+cpath,
                         clk = clk)
-"""
 
 
 # creates separate pattern tables into 2 planes
@@ -81,9 +79,10 @@ patterntable2vrlsplit_spr_bg (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
 # Total of 4 memories
 patterntable2vrlsplit2 (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                         rom_name = "ROM_PTABLE_SPRILO",
-                        dest_path = './00/',
+                        dest_path = "./00/vrl/"+cpath,
                         clk = clk)
 
+"""
 
 # The NES palette is the same for all
 #palcolor2vrl (palfilename = "./examples/dmp/nespalette.pal",

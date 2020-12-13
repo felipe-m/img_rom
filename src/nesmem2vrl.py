@@ -595,3 +595,161 @@ def patterntable2vrlsplit_spr_bg (dumpfilename,
 
 
 
+
+def patterntable2vrlsplit2 (dumpfilename,
+                            mem_width=8,
+                            rom_name = "ROM_PTABLE",
+                            dest_path = './',
+                            clk = True):
+              
+    """
+    Takes a binary memory dump file of a NES Patter Tables
+      https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
+      Both Sprites and Background
+      Separates into 4 tables for each plane and for sprites and background
+      and also separates the table for sprites and 
+
+        2 Tables (sprites and background):  1 bit
+      256 patterns                       :  8 bits
+        2 color planes                   :  1 bit
+        8 rows                           :  3 bit
+     -----------------------------------------------
+     8192 total memory                   : 13 bits
+
+     Divided into 4 memories of 2048 addresses -> 11 bits
+
+
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   8KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: verilog module name to be created
+    dest_path    : path of the verilog file to be created
+    clk          : If false creates a combinatorial memory without clock
+    """
+
+    if clk==True:
+        assign = ': dout <= '
+    else:
+        assign = ': dout  = '
+
+
+    mem_length = os.stat(dumpfilename).st_size # number of memory positions
+    # divided by 4
+    numbits_addr = math.ceil(math.log(mem_length/4,2))
+    hexdig_addr = math.ceil(numbits_addr/4) # how manyhex digits has the 
+    # it has the background and the sprites pattern table, 4KiB each
+    # 8192 positions 2**13 -> 0x2000
+    if os.path.isfile(dumpfilename) and (mem_length == 2**13):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        # 2 color maps (memories) and for sprites (spr) and background (bg)
+        vrlfilename_spr0 = dest_path + basefilename + "spr_0.v"
+        vrlfilename_spr1 = dest_path + basefilename + "spr_1.v"
+        vrlfilename_bg0 = dest_path + basefilename + "bg_0.v"
+        vrlfilename_bg1 = dest_path + basefilename + "bg_1.v"
+        vrlfile_spr0 = open(vrlfilename_spr0, 'w')
+        vrlfile_spr1 = open(vrlfilename_spr1, 'w')
+        vrlfile_bg0 = open(vrlfilename_bg0, 'w')
+        vrlfile_bg1 = open(vrlfilename_bg1, 'w')
+        # write the header
+        # nesmemtype = 1 #pattern table
+        rom_name_spr0 = rom_name + '_SPR_PLN0'
+        rom_name_spr1 = rom_name + '_SPR_PLN1'
+        rom_name_bg0 = rom_name + '_BG_PLN0'
+        rom_name_bg1 = rom_name + '_BG_PLN1'
+        vrlfile_spr0.write('//-   Sprites Pattern table COLOR PLANE 0\n')
+        vrlfile_spr0.write('// https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vrlfile_spr1.write('//-   Sprites Pattern table COLOR PLANE 1\n')
+        vrlfile_spr1.write('// https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vrlfile_bg0.write('//-   Background Pattern table COLOR PLANE 0\n')
+        vrlfile_bg0.write('// https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        vrlfile_bg1.write('//-   Background Pattern table COLOR PLANE 1\n')
+        vrlfile_bg1.write('// https://wiki.nesdev.com/w/index.php/PPU_pattern_tables\n')
+        # divide into 4 memories: mem_length/4
+        write_vrl_header (vrlfile    = vrlfile_spr0,
+                          nesmemtype = -1, 
+                          modulename = rom_name_spr0,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width,
+                          clk        = clk)
+        write_vrl_header (vrlfile    = vrlfile_spr1,
+                          nesmemtype = -1,
+                          modulename = rom_name_spr1,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width,
+                          clk        = clk)
+        write_vrl_header (vrlfile    = vrlfile_bg0,
+                          nesmemtype = -1, 
+                          modulename = rom_name_bg0,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width,
+                          clk        = clk)
+        write_vrl_header (vrlfile    = vrlfile_bg1,
+                          nesmemtype = -1,
+                          modulename = rom_name_bg1,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/4),
+                          mem_width  = mem_width,
+                          clk        = clk)
+
+        vrlfile_spr0.write('                               //  address:   value \n' )
+        vrlfile_spr0.write('                               //    dec  : dec - hex\n')
+        vrlfile_spr1.write('                               //  address:   value \n' )
+        vrlfile_spr1.write('                               //    dec  : dec - hex\n')
+        vrlfile_bg0.write('                               //  address:   value \n' )
+        vrlfile_bg0.write('                               //    dec  : dec - hex\n')
+        vrlfile_bg1.write('                               //  address:   value \n' )
+        vrlfile_bg1.write('                               //    dec  : dec - hex\n')
+
+
+        with open(dumpfilename,"rb") as pttablefile:
+            # the 8192 memory positions divided by 16
+            #    8 rows with 2 planes and Sprites and Background
+            # this first for is for dividing into Sprites and Background
+            for table, pkind, (vrlfile0,vrlfile1) in zip(
+                  [0,1],
+                  ['Sprite','Background'],
+                  [[vrlfile_spr0,vrlfile_spr1],[vrlfile_bg0, vrlfile_bg1]]):
+                 # 0,2: 2 tables: sprites + background
+                vrlfile0.write('          // ')
+                vrlfile0.write(pkind + ' pattern Table COLOR PLANE 0\n')
+                vrlfile1.write('          // ')
+                vrlfile1.write(pkind + ' pattern Table COLOR PLANE 1\n')
+                # for range doesnt take the last one: 0 to 255
+                for pat in range(0, 256): # 256 patterns (in python the last one
+                    # is not taken
+                    # 2 color planes
+                    for pi, vrlfile in zip([0,1],[vrlfile0, vrlfile1]):
+                        for row in range(0, 8):  # 0 to 7: 8 rows, range 
+                            addr = pat*8 + row
+                            byte_str = pttablefile.read(1)
+                            byte = ord(byte_str) #gets the unicode character
+                            byte_bin_str = (format(byte,'b')).zfill(8)
+
+                            vrlfile.write("      " + str(numbits_addr))
+                            vrlfile.write("'h"+format(addr,'X'))
+                            vrlfile.write(assign + str(mem_width) + "'b" +byte_bin_str)
+
+                            # to have the address in dec and hex, and the values
+                            vrlfile.write('; //' + str(addr).rjust(5) + ' : ' )
+                            vrlfile.write(str(byte).rjust(3)+' - ')
+                            vrlfile.write(hex(byte).rjust(3))
+
+                            if row == 0:
+                                vrlfile.write(' -- ' + pkind + ' ' + hex(pat))
+                            vrlfile.write('\n')
+            for vrlfile in [vrlfile_spr0, vrlfile_spr1,
+                            vrlfile_bg0,  vrlfile_bg1]:
+                vrlfile.write('    endcase\n')
+                vrlfile.write('  end\n\n')
+                vrlfile.write('endmodule\n')
+
+                vrlfile.close()
+        pttablefile.close()
+
+
+

@@ -12,7 +12,7 @@ from nesmem2vhd import palcolor2vhd
 # exec(open("./sprilo_00.py").read())
 
 # choose if you want a clock in the memories
-clk = False
+clk = True
 
 
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",

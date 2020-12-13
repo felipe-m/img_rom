@@ -82,8 +82,9 @@ patterntable2vhdsplit2 (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
 
 
 # The NES palette is the same for all
-#palcolor2vhd (palfilename = "./examples/dmp/nespalette.pal",
-#                 mem_width=12,
-#                 rom_name = "ROM_COLORS",
-#                 dest_path = '../examples/vhd/nesrom/smario_start/')
+palcolor2vhd (palfilename = "../nespalette.pal",
+                 mem_width=12,
+                 rom_name = "ROM_COLORS",
+                 dest_path = '../',
+                 clk = False)
 

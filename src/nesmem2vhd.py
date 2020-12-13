@@ -811,8 +811,8 @@ def palcolor2vhd (palfilename,
         # write the header
         write_vhd_header (vhdfile, 5, rom_name, # 3 ROM COLORS
                           filename,64,mem_width, clk=clk)
-        vhdfile.write('                       --    address   :    value \n' )
-        vhdfile.write('                       --  dec -  hex  :  dec - hex(RGB)\n')
+        vhdfile.write('                    --    address   :    value \n' )
+        vhdfile.write('                    --  dec -  hex  :  dec - hex(RGB)\n')
         with open(palfilename,"rb") as palfile:
             pal_filebyte = 0;
             color = 0;
@@ -844,7 +844,8 @@ def palcolor2vhd (palfilename,
                     vhdfile.write(' --' + str(mem_addr).rjust(5) + ' - ' )
                     vhdfile.write(hex(mem_addr).rjust(4) + '  :  ')
                     vhdfile.write(str(color12bits).rjust(4)+' - ')
-                    vhdfile.write(hex(color12bits).rjust(5)+'\n')
+                    vhdfile.write('0x{0:0{1}X}'.format(color12bits,3))
+                    vhdfile.write('\n')
                     mem_addr += 1;
                 pal_filebyte += 1
             vhdfile.write('    );\n')

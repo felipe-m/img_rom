@@ -753,3 +753,87 @@ def patterntable2vrlsplit2 (dumpfilename,
 
 
 
+def palcolor2vrl (palfilename,
+                  mem_width=12,
+                  rom_name = "ROM_COLORS",
+                  dest_path = './',
+                  clk = True):
+    """
+    Takes a binary palette file and converts to verilog ROM
+
+    palfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .pal
+                   64 colors x 3 (RGB)
+                   192 bytes
+    mem_width    : memory width is 12 bits (4x3) can be different
+    rom_name     : string: verilog module name to be created
+    dest_path    : path of the verilog file to be created
+    clk          : If false creates a combinatorial memory without clock
+    """
+
+
+    filemem_length = os.stat(palfilename).st_size # number of memory positions
+    mem_length = 192   
+
+    if clk==True:
+        assign = ': dout <= '
+    else:
+        assign = ': dout  = '
+
+    numbits_addr = math.ceil(math.log(mem_length,2))
+    hexdig_addr = math.ceil(numbits_addr/4) # how manyhex digits has the address
+
+    if os.path.isfile(palfilename) and (mem_length == filemem_length):
+        filename = os.path.split(palfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        vrlfilename = dest_path + basefilename + "_colors.v"
+        vrlfile = open(vrlfilename, 'w')
+        # write the header
+        write_vrl_header (vrlfile, 5, rom_name, # 3 ROM COLORS
+                          filename,64,mem_width, clk=clk)
+        vrlfile.write('                                     //  address:   value \n' )
+        vrlfile.write('                                     //    dec  : dec - hex(RGB)\n')
+
+        with open(palfilename,"rb") as palfile:
+            pal_filebyte = 0;
+            color = 0;
+            mem_addr = 0;
+            while (byte_str := palfile.read(1)): 
+                if color == 0:  # First byte: RED
+                    byte = ord(byte_str) #gets the unicode character
+                    nibble_red = int(byte/16); #get only four bits
+                    color = 1 #next will be green
+                elif color == 1: # Second byte: GREEN
+                    byte = ord(byte_str) #gets the unicode character
+                    nibble_green = int(byte/16); #get only four bits
+                    color = 2 #next will be blue
+                elif color == 2: # Third byte: BLUE
+                    byte = ord(byte_str) #gets the unicode character
+                    nibble_blue = int(byte/16); #get only four bits
+                    color = 0 #next back to green
+
+                    color12bits = nibble_red*256 + nibble_green*16 + nibble_blue
+
+                    color_bin_str = (format(color12bits,'b')).zfill(12)
+
+                    vrlfile.write("      " + str(numbits_addr))
+                    vrlfile.write("'h"+format(mem_addr,'X'))
+                    vrlfile.write(assign + str(mem_width) + "'b" +color_bin_str)
+
+                    # to have the address in dec and hex, and the values
+                    vrlfile.write('; //' + str(mem_addr).rjust(5) + ' : ' )
+                    vrlfile.write(str(color12bits).rjust(4)+' - ')
+                    #vrlfile.write(hex(color12bits).rjust(5))
+                    vrlfile.write('0x{0:0{1}X}'.format(color12bits,3))
+
+
+                    vrlfile.write('\n')
+                    mem_addr += 1;
+                pal_filebyte += 1
+            vrlfile.write('    endcase\n')
+            vrlfile.write('  end\n\n')
+            vrlfile.write('endmodule\n')
+
+        vrlfile.close()
+        palfile.close()
+

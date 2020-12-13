@@ -7,7 +7,7 @@ sys.path.append(filepath +  "/../../../src/")
 from nesmem2vrl import nesmem2vrl, nesmem2vrlattr
 from nesmem2vrl import patterntable2vrlsplit, patterntable2vrlsplit2
 from nesmem2vrl import patterntable2vrlsplit_spr_bg
-#from nesmem2vrl import palcolor2vrl
+from nesmem2vrl import palcolor2vrl
 
 # exec(open("./sprilo_00_vrl.py").read())
 
@@ -82,12 +82,11 @@ patterntable2vrlsplit2 (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                         dest_path = "./00/vrl/"+cpath,
                         clk = clk)
 
-"""
 
 # The NES palette is the same for all
-#palcolor2vrl (palfilename = "./examples/dmp/nespalette.pal",
-#                 mem_width=12,
-#                 rom_name = "ROM_COLORS",
-#                 dest_path = '../examples/vhd/nesrom/smario_start/')
+palcolor2vrl (palfilename = "../nespalette.pal",
+                 mem_width=12,
+                 rom_name = "ROM_COLORS",
+                 dest_path = '../',
+                 clk = False)
 
-"""

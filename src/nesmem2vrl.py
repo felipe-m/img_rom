@@ -347,3 +347,122 @@ def nesmem2vrlattr (dumpfilename,
         nametablefile.close()
             
 
+
+
+def patterntable2vrlsplit (dumpfilename,
+                           mem_width=8,
+                           rom_name = "ROM_PTABLE",
+                           dest_path = './',
+                           clk = True):
+              
+    """
+    Takes a binary memory dump file of a NES Patter Tables
+      https://wiki.nesdev.com/w/index.php/PPU_pattern_tables
+      Both Sprites and Background
+      Separates into 2 tables for each plane
+
+        2 Tables (sprites and background):  1 bit
+      256 patterns                       :  8 bits
+        2 color planes                   :  1 bit
+        8 rows                           :  3 bit
+     -----------------------------------------------
+     8192 total memory                   : 13 bits
+
+     Divided into 2 memories of 4096 addresses -> 12 bits
+
+
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   8KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: verilog module name to be created
+    dest_path    : path of the verilog file to be created
+    clk          : If false creates a combinatorial memory without clock
+    """
+
+    if clk==True:
+        assign = ': dout <= '
+    else:
+        assign = ': dout  = '
+
+
+
+    mem_length = os.stat(dumpfilename).st_size # number of memory positions
+    # mem_length divided by 2, because planes are divided
+    numbits_addr = math.ceil(math.log(mem_length/2,2))
+    hexdig_addr = math.ceil(numbits_addr/4) # how manyhex digits has the address
+    # it has the background and the sprites pattern table, 4KiB each
+    # 8192 positions 2**13 -> 0x2000
+    if os.path.isfile(dumpfilename) and (mem_length == 2**13):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        # 2 color maps (memories)
+        vrlfilename0 = dest_path + basefilename + "_0.v"
+        vrlfilename1 = dest_path + basefilename + "_1.v"
+        vrlfile0 = open(vrlfilename0, 'w')
+        vrlfile1 = open(vrlfilename1, 'w')
+        # write the header
+        # nesmemtype = 1 #pattern table
+        rom_name0 = rom_name + '_color0'
+        rom_name1 = rom_name + '_color1'
+        # divide into 2 memories: mem_length/2
+        write_vrl_header (vrlfile    = vrlfile0,
+                          nesmemtype = 2, 
+                          modulename = rom_name0,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/2),
+                          mem_width  = mem_width,
+                          clk        = clk)
+        write_vrl_header (vrlfile    = vrlfile1,
+                          nesmemtype = 2,
+                          modulename = rom_name1,
+                          orig_name  = filename,
+                          mem_length = int(mem_length/2),
+                          mem_width  = mem_width,
+                          clk        = clk)
+
+        vrlfile0.write('                              //  address:   value \n' )
+        vrlfile1.write('                              //  address:   value \n' )
+        vrlfile0.write('                              //    dec  : dec - hex\n')
+        vrlfile1.write('                              //    dec  : dec - hex\n')
+
+        with open(dumpfilename,"rb") as pttablefile:
+            # the 8192 memory positions divided by 16
+            #    8 rows with 2 planes
+            for table, pkind in zip([0,1],['Sprite','Background']):
+                 # 0,2: 2 tables: sprites + background
+                vrlfile0.write('          // ' + pkind + ' pattern Table\n')
+                vrlfile1.write('          // ' + pkind + ' pattern Table\n')
+                # for range doesnt take the last one: 0 to 255
+                for pat in range(0, 256): # 256 patterns (in python the last one
+                    # is not taken
+                    # 2 color planes
+                    for pi, vrlfile in zip([0,1],[vrlfile0, vrlfile1]):
+                        for row in range(0, 8):  # 0 to 7: 8 rows, range 
+                            addr = table*2048 + pat*8 + row
+                            byte_str = pttablefile.read(1)
+                            byte = ord(byte_str) #gets the unicode character
+                            byte_bin_str = (format(byte,'b')).zfill(8)
+
+                            vrlfile.write("      " + str(numbits_addr))
+                            vrlfile.write("'h"+format(addr,'X'))
+                            vrlfile.write(assign + str(mem_width) + "'b" +byte_bin_str)
+
+                            # to have the address in dec and hex, and the values
+                            vrlfile.write('; //' + str(addr).rjust(5) + ' : ' )
+                            vrlfile.write(str(byte).rjust(3)+' - ')
+                            vrlfile.write(hex(byte).rjust(3))
+                            if row == 0:
+                                vrlfile.write(' -- ' + pkind + ' ' + hex(pat))
+                            vrlfile.write('\n')
+            for vrlfile in [vrlfile0, vrlfile1]:
+                vrlfile.write('    endcase\n')
+                vrlfile.write('  end\n\n')
+                vrlfile.write('endmodule\n')
+
+        vrlfile0.close()
+        vrlfile1.close()
+        pttablefile.close()
+
+
+

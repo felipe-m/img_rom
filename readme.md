@@ -1,6 +1,6 @@
 # Imágenes a memorias
 
-[English](#Image to memory)
+[English](#Image-to-memory)
 
 ---
 

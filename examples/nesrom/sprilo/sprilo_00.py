@@ -12,59 +12,63 @@ from nesmem2vhd import palcolor2vhd
 # exec(open("./sprilo_00.py").read())
 
 # choose if you want a clock in the memories
-clk = True
+clk = False
+
+if clk==True:
+    cpath = 'clk/'
+else:
+    cpath = 'comb/'
 
 
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",
               nesmemtype = 0, # Name Table
               rom_name = "ROM_NTABLE_SPRILO_00",
-              dest_path = "./00/",
+              dest_path = "./00/vhd/"+cpath,
               clk = clk)
 
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",
               nesmemtype = 0, # Name Table
               rom_name = "ROM_NTABLE0_SPRILO_00", #only nametable 0
-              dest_path = "./00/",
+              dest_path = "./00/vhd/"+cpath,
               halfnametable = True,
               clk = clk)
 
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_ptable.dmp",
               nesmemtype = 1, # Pattern Table
               rom_name = "ROM_PTABLE_SPRILO",
-              dest_path = "./00/",
+              dest_path = "./00/vhd/"+cpath,
               clk = clk)
 
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_oam_00.dmp",
               nesmemtype = 6, # OAM
               rom_name = "ROM_OAM_SPRILO_00",
-              dest_path = "./00/",
-              #clk = True)
+              dest_path = "./00/vhd/"+cpath,
               clk = clk)
 
 # creates attribute table (separated)
 nesmem2vhdattr(dumpfilename = "./00/dmp/sprilo_ntable_00.dmp",
               rom_name = "ROM_ATABLE_SPRILO_00",
-              dest_path = "./00/",
+              dest_path = "./00/vhd/"+cpath,
               clk = clk)
 
 nesmem2vhd(dumpfilename = "./00/dmp/sprilo_palette.dmp",
               nesmemtype = 4, # Palette Memory
               rom_name = "ROM_PALETTE_SPRILO",
-              dest_path = "./00/",
+              dest_path = "./00/vhd/"+cpath,
               universal_bgcolor = True,
               clk = clk)
 
 # creates separate pattern tables into 2 planes
 patterntable2vhdsplit (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                        rom_name = "ROM_PTABLE_SPRILO",
-                       dest_path = './00/',
+                       dest_path = "./00/vhd/"+cpath,
                        clk = clk)
 
 # creates separate pattern tables into sprites and background
 # Total of 2 memories
 patterntable2vhdsplit_spr_bg (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                         rom_name = "ROM_PTABLE_SPRILO",
-                        dest_path = './00/',
+                        dest_path = "./00/vhd/"+cpath,
                         clk = clk)
 
 
@@ -73,7 +77,7 @@ patterntable2vhdsplit_spr_bg (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
 # Total of 4 memories
 patterntable2vhdsplit2 (dumpfilename = "./00/dmp/sprilo_ptable.dmp",
                         rom_name = "ROM_PTABLE_SPRILO",
-                        dest_path = './00/',
+                        dest_path = "./00/vhd/"+cpath,
                         clk = clk)
 
 

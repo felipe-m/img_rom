@@ -234,10 +234,8 @@ def nesmem2vrl (dumpfilename,
                 vrlfile.write("'h"+format(mem_addr,'X'))
                 vrlfile.write(assign + str(mem_width) + "'b" +byte_bin_str)
 
-                vrlfile.write(';') #space
-
                 # to have the address in dec and hex, and the values
-                vrlfile.write(' //' + str(mem_addr).rjust(5) + ' : ' )
+                vrlfile.write('; //' + str(mem_addr).rjust(5) + ' : ' )
                 vrlfile.write(str(byte).rjust(3)+' - ')
                 vrlfile.write(hex(byte).rjust(3))
                 # to indicate the line number
@@ -277,5 +275,75 @@ def nesmem2vrl (dumpfilename,
             
 
 
+def nesmem2vrlattr (dumpfilename,
+                    mem_width=8,
+                    rom_name = "ROM_NESTABLE",
+                    dest_path = './',
+                    clk = True):
+    """
+    Takes a binary memory dump file of a NES memory,
+    takes a Name Tables but only converts the attribute table
 
+    dumpfilename : name of the memory dump file (includes path and extension)
+                   binary file. File extension usually is .dmp
+                   2KiB
+    mem_width    : NES memory width is 8 bits
+    rom_name     : string: verilog module name to be created
+    dest_path    : path of the verilog file to be created
+    clk          : If false creates a combinatorial memory without clock
+    """
+
+    if clk==True: # if it has a clock the assignment is <=
+        assign = ': dout <= '
+    else:
+        assign = ': dout  = '
+
+
+    filemem_length = os.stat(dumpfilename).st_size # number of memory positions
+    mem_length = 2048   
+    attrmem_length = 128 # 2x64
+
+    numbits_addr = math.ceil(math.log(attrmem_length,2))
+    hexdig_addr = math.ceil(numbits_addr/4) # how manyhex digits has the address
+
+    if os.path.isfile(dumpfilename) and (mem_length == filemem_length):
+        filename = os.path.split(dumpfilename)[1]  #take away the path
+        basefilename = os.path.splitext(filename)[0] #take away extension
+        vrlfilename = dest_path + basefilename + "_attr.v"
+        vrlfile = open(vrlfilename, 'w')
+        # write the header
+        write_vrl_header (vrlfile, 3, rom_name, # 3 Attribute table
+                          filename,attrmem_length,mem_width, clk=clk)
+        vrlfile.write('                               //  address:   value \n' )
+        vrlfile.write('                               //    dec  : dec - hex\n')
+        with open(dumpfilename,"rb") as nametablefile:
+            mem_addr = 0;
+            attrmem_addr = 0;
+            while (byte_str := nametablefile.read(1)): 
+                if ((mem_addr >= 960 and mem_addr < 1024) or
+                    (mem_addr >= 960 + 1024)) :
+                    byte = ord(byte_str) #gets the unicode character
+
+                    byte_bin_str = (format(byte,'b')).zfill(mem_width)
+
+                    vrlfile.write("      " + str(numbits_addr))
+                    vrlfile.write("'h"+format(attrmem_addr,'X'))
+                    vrlfile.write(assign + str(mem_width) + "'b" +byte_bin_str)
+
+                    # to have the address in dec and hex, and the values
+                    vrlfile.write('; //' + str(attrmem_addr).rjust(5) + ' : ' )
+                    vrlfile.write(str(byte).rjust(3)+' - ')
+                    vrlfile.write(hex(byte).rjust(3))
+                    vrlfile.write('\n')
+
+                    attrmem_addr += 1;
+                mem_addr += 1
+
+            vrlfile.write('    endcase\n')
+            vrlfile.write('  end\n\n')
+            vrlfile.write('endmodule\n')
+
+        vrlfile.close()
+        nametablefile.close()
+            
 

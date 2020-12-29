@@ -4,15 +4,17 @@
 
 ---
 
-Hay dos programas:
+Hay tres programas:
 
 + Programa en lenguaje C que convierten imágenes a memorias ROM en VHDL
-+ Script en Python que convierte memorias de la [NES](https://es.wikipedia.org/wiki/Nintendo_Entertainment_System) a memorias ROM en VHDL
++ [nesmem2vhd.py](src/nesmem2vhd.py): Script en Python que convierte memorias de la [NES](https://es.wikipedia.org/wiki/Nintendo_Entertainment_System) a memorias ROM en VHDL. Para verilog [nesmem2vrl.py](src/nesmem2vrl.py)
++ [rvinstr2vhd.py](src/rvinstr2vhd.py): Script en Python que convierte el volcado de memoria de instrucciones del RISC-V en memoria ROM de instrucciones en VHDL. Se utiliza el RARS (https://github.com/TheThirdOne/rars) para volcar en memoria (formato de exportación: Text-Data segment window): 
 
 En [examples](examples) hay ejemplos de imágenes y las memorias resultantes en VHDL
 
 En [examples/nesrom](examples/nesrom) hay ejemplos de las memorias de la NES.
 
+En [examples/instr](examples/instr) hay ejemplos de las memorias de instrucciones del RISC-V.
 
 ## Conversión de una imagen PPM, PGM o PBM en una memoria ROM en VHDL
 
@@ -32,10 +34,11 @@ Tienes ejemplos VHDL [examples/vhd](examples/vhd)
 # Image to memory
 
 
-There are 2 different codes
+There are 3 different codes
 
 + Code in C language to convert a image into a VHDL ROM memory
-+ Script in Python to convert [NES](https://en.wikipedia.org/wiki/Nintendo_Entertainment_System) dump memories into VHDL ROM memories
++ [nesmem2vhd.py](src/nesmem2vhd.py): Python script to convert [NES](https://en.wikipedia.org/wiki/Nintendo_Entertainment_System) dump memories into VHDL ROM memories (or verilog: [nesmem2vrl.py](src/nesmem2vrl.py) )
++ [rvinstr2vhd.py](src/rvinstr2vhd.py): Python script to convert RISC-V memory dump file (using RARS https://github.com/TheThirdOne/rars) into VHDL ROM instruction memory (export format: Text-Data segment window)
 
 ## Conversion of a a PPM, PGM or PBM image into a VHDL ROM memory file
 

@@ -1,0 +1,13 @@
+Address     Code        Basic                        Line Source
+
+0x00003000  0x00100293  addi x5,x0,1                 6    	addi x5, x0, 1 #cargamos un uno para desplazarlo 0x1000
+0x00003004  0x00c29293  slli x5,x5,12                7    	slli x5, x5, 12
+0x00003008  0x00100313  addi x6,x0,1                 9    	addi x6, x0, 1 #cargamos un uno para desplazarlo 0x1000
+0x0000300c  0x00d31313  slli x6,x6,13                10   	slli x6, x6, 13
+0x00003010  0x40000393  addi x7,x0,0x00000400        11   	addi x7, x0, 1024
+0x00003014  0x0002c403  lbu x8,0(x5)                 14   	lbu x8, 0(x5)	
+0x00003018  0x00830023  sb x8,0(x6)                  15   	sb x8, 0(x6)
+0x0000301c  0x00128293  addi x5,x5,1                 16   	addi x5, x5, 1
+0x00003020  0x00130313  addi x6,x6,1                 17   	addi x6, x6, 1
+0x00003024  0xfff38393  addi x7,x7,0xffffffff        18   	addi x7, x7, -1
+0x00003028  0xfe0396e3  bne x7,x0,0xffffffec         19   	bne x7,x0, loop

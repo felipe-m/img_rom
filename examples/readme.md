@@ -3,6 +3,7 @@
 - [vhd](vhd): ejemplos de ROM en VHDL
 - [img](img): imágenes originales de las ROM de VHDL
 - [nesrom](nesrom): está organizado por juegos, e incluso distintas pantallas, dentro de cada carpeta están las pantallas (como si fuesen capturas de imágenes) donde están las memorias ROM en VHDL. Dento hay otra carpeta dmp donde están las memorias de la NES en binario (que se convierten en ROM en VHDL por el script)
+- [instr](instr): ejemplos de volcados de memoria de RISC-V y su conversión a memorias ROM en VHDL. Se recomienda utilizar el RARS (https://github.com/TheThirdOne/rars) y volcar memoria en utilizando el formato (Text/Data segment window)
 
 ---
 

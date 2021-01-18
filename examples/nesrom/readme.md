@@ -2,7 +2,7 @@
 
 Gráficos basados en mapas de teselas
 
-## [Sprilo](sprilo)
+## [Sprilo](sprilo/readme.md)
 
 Juego sencillo con un sprite simple de 8x8, bueno para empezar y probar que va bien
 
@@ -14,5 +14,16 @@ https://github.com/cbrwn/gameoff
 
 ---
 
-## [Super Mario](smario)
+## [Super Mario](smario/reame.md)
 
+---
+
+## [Lawn Mower](lawnmower/readme.md)
+
+Juego sencillo:
+
+https://shiru.untergrund.net/software.shtml
+
+https://github.com/sehugg/lawn-mower-nes
+
+![Pantalla Lawn Mower](lawnmower/lawnmower_screenshot.png)

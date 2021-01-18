@@ -268,8 +268,8 @@ def rvinstr2vhd_txt ( dumpfilename,
             
 
 
-rvinstr2vhd_txt(dumpfilename = "../examples/instr/text_asm.txt",
-                dest_path = '../examples/instr/')
+#rvinstr2vhd_txt(dumpfilename = "../examples/instr/text_asm.txt",
+#                dest_path = '../examples/instr/')
 
 
 
@@ -284,16 +284,16 @@ rvinstr2vhd_txt(dumpfilename = "../examples/instr/text_asm.txt",
 #                addr_name = 'a',
 #                dout_name = 'd_o')
 
-rvinstr2vhd_txt(dumpfilename = "../examples/instr/hex_text.txt",
-                numbits_addr = 0,
-                fill_mem = False,
-                #mem_width = 32,
-                rom_name  = "MEM_INST",
-                dest_path = '../examples/instr/',
-                clk = False,
-                clk_name  = 'clk',
-                addr_name = 'a',
-                dout_name = 'd_o')
+#rvinstr2vhd_txt(dumpfilename = "../examples/instr/hex_text.txt",
+#                numbits_addr = 0,
+#                fill_mem = False,
+#                #mem_width = 32,
+#                rom_name  = "MEM_INST",
+#                dest_path = '../examples/instr/',
+#                clk = False,
+#                clk_name  = 'clk',
+#                addr_name = 'a',
+#                dout_name = 'd_o')
 
 
 #rvinstr2vhd_txt(dumpfilename = "../examples/instr/text_asm.txt",

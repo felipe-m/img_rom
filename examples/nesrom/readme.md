@@ -33,3 +33,9 @@ https://github.com/sehugg/lawn-mower-nes
 ## [Pac-Man](pacman/readme.md)
 
 ![Pantalla Pac-Man](pacman/pacman_screenshot.png)
+
+---
+
+## [Nova the Squirrel](nova/readme.md)
+
+![Pantalla Nova](nova/nova_screenshot.png)

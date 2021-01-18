@@ -27,3 +27,9 @@ https://shiru.untergrund.net/software.shtml
 https://github.com/sehugg/lawn-mower-nes
 
 ![Pantalla Lawn Mower](lawnmower/lawnmower_screenshot.png)
+
+---
+
+## [Pac-Man](pacman/readme.md)
+
+![Pantalla Pac-Man](pacman/pacman_screenshot.png)

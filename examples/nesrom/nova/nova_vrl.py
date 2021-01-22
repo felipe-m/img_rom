@@ -12,7 +12,7 @@ from nesmem2vrl import palcolor2vrl
 # exec(open("./nova_vrl.py").read())
 
 # choose if you want a clock in the memories
-clk = True
+clk = False
 
 if clk==False:
     cpath = 'clk/'
@@ -25,6 +25,13 @@ nesmem2vrl(dumpfilename = "./dmp/nova_ntable.dmp",
               dest_path = "./vrl/"+cpath,
               clk = clk)
 
+
+nesmem2vrl(dumpfilename = "./dmp/nova_ntable.dmp",
+              nesmemtype = 0, # Name Table
+              rom_name = "ROM_NTABLE_NOVA_00",
+              dest_path = "./vrl/"+cpath,
+              halfnametable = True,
+              clk = clk)
 
 # This is racetrack 1 (see bottom)
 #nesmem2vrl(dumpfilename = "./dmp/nova_ntable.dmp",

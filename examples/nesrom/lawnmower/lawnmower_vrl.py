@@ -12,7 +12,7 @@ from nesmem2vrl import palcolor2vrl
 # exec(open("./lawnmower_vrl.py").read())
 
 # choose if you want a clock in the memories
-clk = True
+clk = False
 
 if clk==True:
     cpath = 'clk/'
@@ -24,6 +24,14 @@ nesmem2vrl(dumpfilename = "./dmp/lawnmower_ntable.dmp",
               rom_name = "ROM_NTABLE_LAWN_00",
               dest_path = "./vrl/"+cpath,
               clk = clk)
+
+nesmem2vrl(dumpfilename = "./dmp/lawnmower_ntable.dmp",
+              nesmemtype = 0, # Name Table
+              rom_name = "ROM_NTABLE_LAWN_00",
+              dest_path = "./vrl/"+cpath,
+              halfnametable = True,
+              clk = clk)
+
 
 
 # This is racetrack 1 (see bottom)

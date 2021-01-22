@@ -23,6 +23,7 @@ nesmem2vrl(dumpfilename = "./dmp/pacman_ntable.dmp",
               nesmemtype = 0, # Name Table
               rom_name = "ROM_NTABLE_PACMAN_00",
               dest_path = "./vrl/"+cpath,
+              halfnametable = True,
               clk = clk)
 
 

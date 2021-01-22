@@ -10,14 +10,14 @@
 ------ Universidad Rey Juan Carlos ----------------------
 ------ https://github.com/felipe-m ----------------------
 ---------------------------------------------------------
------ Memory without clock -----
+----- Memory with clock ------
 
 ----- Ports ---------------------------------------------
 -- Inputs   ---------------------------------------------
---   -- clk  :  clock signal
+--    clk  :  clock signal
 --    addr :  memory address
 -- Salidas  ---------------------------------------------
---    dout :  memory data out  (no clock: in the same clock cycle)
+--    dout :  memory data out  (a clock cycle later)
 
 
 library IEEE;
@@ -27,7 +27,7 @@ library IEEE;
 
 entity ROM_NTABLE_PACMAN_START is
   port (
-    --clk  : in  std_logic;   -- clock
+    clk  : in  std_logic;   -- clock
     addr : in  std_logic_vector(10-1 downto 0);  --1024 memory positions
     dout : out std_logic_vector(8-1 downto 0) -- memory data width
   );
@@ -1068,10 +1068,10 @@ architecture BEHAVIORAL of ROM_NTABLE_PACMAN_START is
     );
 begin
   addr_int <= to_integer(unsigned(addr));
-  --P_ROM: process(clk)
-  --begin
-  --  if clk'event and clk='1' then
+  P_ROM: process(clk)
+  begin
+    if clk'event and clk='1' then
       dout <= table_mem(addr_int);
-  --  end if;
-  --end process;
+    end if;
+  end process;
 end BEHAVIORAL;

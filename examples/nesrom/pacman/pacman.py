@@ -24,6 +24,7 @@ nesmem2vhd(dumpfilename = "./dmp/pacman_ntable.dmp",
               nesmemtype = 0, # Name Table 2KiB, second name table is empty: 0s
               rom_name = "ROM_NTABLE_PACMAN_00",
               dest_path = "./vhd/"+cpath,
+              halfnametable = True,
               clk = clk)
 
 # This is racetrack 1 (see bottom)

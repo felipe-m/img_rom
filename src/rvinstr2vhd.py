@@ -265,6 +265,8 @@ def rvinstr2vhd_txt ( dumpfilename,
         vhdfile.write('end behavioural;\n')
         vhdfile.close()
         file_instr.close()
+    else:
+        print("File not found")
             
 
 

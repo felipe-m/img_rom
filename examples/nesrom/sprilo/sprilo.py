@@ -12,7 +12,7 @@ from nesmem2vhd import palcolor2vhd
 # exec(open("./sprilo.py").read())
 
 # choose if you want a clock in the memories
-clk = True
+clk = False
 
 if clk==True:
     cpath = 'clk/'
@@ -67,6 +67,14 @@ nesmem2vhd(dumpfilename = "./dmp/sprilo_palette2.dmp",
               dest_path = "./vhd/"+cpath,
               universal_bgcolor = True,
               clk = clk)
+
+nesmem2vhd(dumpfilename = "./dmp/sprilo_palette3.dmp",
+              nesmemtype = 4, # Palette Memory
+              rom_name = "ROM_PALETTE_SPRILO",
+              dest_path = "./vhd/"+cpath,
+              universal_bgcolor = True,
+              clk = clk)
+
 
 
 # creates separate pattern tables into 2 planes

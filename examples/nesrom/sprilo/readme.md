@@ -47,6 +47,7 @@ En el directorio [vrl](vrl) están las memorias en verilog, con reloj y sin relo
 
 [sprilo_ptablebg_1.vhd](vhd/clk/sprilo_ptablebg_1.vhd): Los mosaicos (tiles), la tabla de patrones de fondo (sin sprites). Con el plano de color 1. 2KiB en total
 
+[sprilo_palette3.vhd](vhd/clk/sprilo_palette3.vhd): La paleta de colores del sprilo (hay 3 ya que se han modificado algunos colores)
 
 [sprilo_introscr_nt0.vhd](vhd/clk/sprilo_introscr_nt0cr_nt0.vhd): El mapa de mosaicos (name table), para la pantalla de inicio. 1KiB
 
@@ -93,6 +94,10 @@ Paleta original:
 Paleta modificada:
 
 ![Paleta modificada](sprilo_palette2.png)
+
+Paleta modificada 3:
+
+![Paleta modificada 3](sprilo_palette3.png)
 
 
 Pista 1:

@@ -86,6 +86,13 @@ Pantalla de Menu:
 
 ![Menu](sprilo_menu.png)
 
+Paleta original:
+
+![Paleta original](sprilo_palette.png)
+
+Paleta modificada:
+
+![Paleta modificada](sprilo_palette2.png)
 
 
 Pista 1:

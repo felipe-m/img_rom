@@ -145,6 +145,24 @@ En blanco y negro
 ![8imagenes_color_16](img/imagenes8_16x16_bn.png)
 1. [rom1b_1f_imagenes8_16x16_bn_t.vhd](vhd/rom1b_1f_imagenes8_16x16_bn_t.vhd)
 
+## 16 personajes y formas en una memoria
+* Imagen de 16 columnas x 256 filas.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 128 direcciones de memoria (8 imágenes)
+  * Opción: 1 bit para el color (monocroma)
+  * Opción: 3 bit para el color (3 memorias)
+
+En color:
+![16imagenes_color_16](img/imagenes16_16x16.png)
+1. [rom1b_red_imagenes16_16x16.vhd](vhd/rom1b_red_imagenes16_16x16.vhd)
+1. [rom1b_green_imagenes16_16x16.vhd](vhd/rom1b_green_imagenes16_16x16.vhd)
+1. [rom1b_blue_imagenes16_16x16.vhd](vhd/rom1b_blue_imagenes16_16x16.vhd)
+
+En blanco y negro
+![16imagenes_color_16](img/imagenes16_16x16_bn.png)
+1. [rom1b_1f_imagenes16_16x16_bn_t.vhd](vhd/rom1b_1f_imagenes16_16x16_bn_t.vhd)
+
 
 
 
@@ -167,3 +185,29 @@ En blanco y negro
 * ![laberinto_40x30](img/laberinto_40x30_x4.png)
 
 1. [laberinto.vhd](vhd/rom1b_1f_laberinto_40x30_t.vhd)
+
+## Pista de carreras 32x30 blanco y negro
+* Imagen de 32 columnas x 30 filas
+* Una memoria. En cada direccion de memoria está la fila de 32 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 30 direcciones de memoria
+* El color blanco ('1') es la pista
+* ![racetrack_1_bn_x4](img/racetrack_1_bn_x4.png)
+
+1. [rom1b_1f_racetrack_1_t_32x30.vhd](vhd/rom1b_1f_racetrack_1_t_32x30.vhd)
+
+## Pista de carreras 32x30 4 colores (2 memorias o 3)
+* Imagen de 32 columnas x 30 filas
+* Dos memorias (o tres, pero la de rojo no hace falta). En cada direccion de memoria está la fila de 32 bits(pixeles)
+* Cada pixel es un bit de la dirección de cada memoria.
+* 30 direcciones de memoria
+* Si se toman las memorias Verde y Azul. El rojo no hace falta. Los colores son:
+    * "00": borde de pista (rojo (100) en la de tres colores)
+    * "11": pista (blanco (111) en la de tres colores)
+    * "10": hierba (010 en la de tres colores)
+    * "01": linea de meta (001 en la de tres colores)
+* ![racetrack_1_x4](img/racetrack_1_x4.png)
+
+1. [rom1b_red_racetrack_1.vhd](vhd/rom1b_red_racetrack_1.vhd) (no hace falta)
+1. [rom1b_green_racetrack_1.vhd](vhd/rom1b_green_racetrack_1.vhd)
+1. [rom1b_blue_racetrack_1.vhd](vhd/rom1b_blue_racetrack_1.vhd)

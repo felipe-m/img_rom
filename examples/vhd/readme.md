@@ -153,6 +153,45 @@ En blanco y negro
 1. [rom1b_1f_imagenes16_16x16_bn_t.vhd](rom1b_1f_imagenes16_16x16_bn_t.vhd)
 
 
+## 32 caracteres: números, algunas letras y personajes en una memoria (3 memorias de color)
+* Imagen de 16 columnas x 512 filas.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 512 direcciones de memoria (32 imágenes)
+* 3 memorias de cada color (puede ser indexado)
+* Los caracteres son:
+    * de 0x00 a 0x09: los numeros del 0 al 9
+    * 0x0A: P
+    * 0x0B: L
+    * 0x0C: A
+    * 0x0D: Y
+    * 0x0E: S
+    * 0x0F: T
+    * 0x10: O
+    * 0x11: W
+    * 0x12: I
+    * 0x13: N
+    * 0x14: !
+    * 0x15: :
+    * 0x16: Mario
+    * 0x17: Mario run
+    * 0x18: Mario jump
+    * 0x19: pacman
+    * 0x1A: monster
+    * 0x1B: monster afraid
+    * 0x1C: cerezas
+    * 0x1D: fresa
+    * 0x1E: coche carreras hacia arriba
+    * 0x1F: coche carreras diagonal
+
+
+
+En color:
+![num32_play_sprite16x16](../img/num32_play_sprite16x16.png)
+1. [rom1b_red_32num_play_sprite16x16.vhd](rom1b_red_32num_play_sprite16x16.vhd)
+1. [rom1b_green_32num_play_sprite16x16.vhd](rom1b_green_32num_play_sprite16x16.vhd)
+1. [rom1b_blue_32num_play_sprite16x16.vhd](rom1b_blue_32num_play_sprite16x16.vhd)
+
 
 
 ## Laberinto 20x15 blanco y negro

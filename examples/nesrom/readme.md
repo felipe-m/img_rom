@@ -14,7 +14,7 @@ https://github.com/cbrwn/gameoff
 
 ---
 
-## [Super Mario](smario/reame.md)
+## [Super Mario](smario/readme.md)
 
 ---
 

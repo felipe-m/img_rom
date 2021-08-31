@@ -54,6 +54,10 @@ Esta es la pantalla que se quiere mostrar:
 
 ![Pantalla que se quiere mostrar](nova_screenshot.png)
 
+El fondo, pero sin sprites:
+
+![Fondo que se quiere mostrar](nova_screenshot_nt.png)
+
 Solo tiene varios sprite 8x8:
 
 ![Informacion del sprite](nova_sprites_info.png)
@@ -69,7 +73,6 @@ Otra pantalla haciendo scroll:
 Paleta:
 
 ![Menu](nova_paleta.png)
-
 
 
 ---

@@ -11,11 +11,12 @@ Hay varios programas:
 + [rvinstr2vhd.py](src/rvinstr2vhd.py): Script en Python que convierte el volcado de memoria de instrucciones del RISC-V en memoria ROM de instrucciones en VHDL. Se utiliza el RARS (https://github.com/TheThirdOne/rars) para volcar en memoria (formato de exportación: Text-Data segment window).
 + [vhdlrom2vrl.py] (src/vhdlrom2vrl.py): Script en Python que convierte una memoria ROM VHDL a verilog
 
-En [examples](examples) hay ejemplos de imágenes y las memorias resultantes en VHDL
+Ejemplos:
 
-En [examples/nesrom](examples/nesrom) hay ejemplos de las memorias de la NES.
-
-En [examples/instr](examples/instr) hay ejemplos de las memorias de instrucciones del RISC-V.
+* [examples](examples) hay ejemplos de imágenes y las memorias resultantes en VHDL
+* [examples/nesrom](examples/nesrom) hay ejemplos de las memorias de la NES en VHDL y verilog
+* [examples/nesrom/projects](examples/nesrom/projects) ejemplos de projectos (por ahora solo la Tabla de Nombres)  (VHDL, verilog, icestudio)
+* [examples/instr](examples/instr) hay ejemplos de las memorias de instrucciones del RISC-V.
 
 ## Conversión de una imagen PPM, PGM o PBM en una memoria ROM en VHDL
 
@@ -40,7 +41,7 @@ There are 3 different codes
 + Code in C language to convert a image into a VHDL ROM memory
 + [nesmem2vhd.py](src/nesmem2vhd.py): Python script to convert [NES](https://en.wikipedia.org/wiki/Nintendo_Entertainment_System) dump memories into VHDL ROM memories (or verilog: [nesmem2vrl.py](src/nesmem2vrl.py) )
 + [rvinstr2vhd.py](src/rvinstr2vhd.py): Python script to convert RISC-V memory dump file (using RARS https://github.com/TheThirdOne/rars) into VHDL ROM instruction memory (export format: Text-Data segment window)
-+ [vhdlrom2vrl.py] (src/vhdlrom2vrl.py): Python script to convert a VHDL ROM into verilog
++ [vhdlrom2vrl.py](src/vhdlrom2vrl.py): Python script to convert a VHDL ROM into verilog
 
 ## Conversion of a a PPM, PGM or PBM image into a VHDL ROM memory file
 
@@ -51,5 +52,10 @@ Then, compile the source and run the executable to convert it into a VHDL ROM me
 Read the img2rom.htm (in Spanish) o the markdown version [img2rom.md](img2rom.md) 
 
 Check the examples [examples/vhd](examples/vhd)
+
+* [examples](examples) some images and their resulting VHDL ROM memories
+* [examples/nesrom](examples/nesrom) NES PPU memories in VHDL and verilog
+* [examples/nesrom/projects](examples/nesrom/projects) NES Name Table implementation example (VHDL, verilog, icestudio)
+* [examples/instr](examples/instr) examples of RISC-V ROM 
 
 [examples/vhd/readme.md](examples/vhd/readme.md)

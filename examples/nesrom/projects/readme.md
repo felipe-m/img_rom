@@ -12,11 +12,17 @@ First project just to understand how the Name Table works.
 
 VHDL, verilog and Icestudio versions
  
-Video para más información: https://youtu.be/Twvdh8xt7a4
+Video para más información (video in Spanish): https://youtu.be/Twvdh8xt7a4
 
 Y pdf: https://doi.org/10.5281/zenodo.5303187 
 
+Name table can be shown in grayscale (each gray level corresponds to a pattern index):
+
 ![Tabla nombres mario](p1_ntable/smario_tablanombres_traspas_invertido_x4.png)
+
+Or in color to have more contrast and better appreciate the indexes:
+
+![Tabla nombres mario](p1_ntable/smario_tablanombres_traspas_rgb222_x4.png)
 
 ### [Icestudio project](p1_nable/smario/icestudio)
 

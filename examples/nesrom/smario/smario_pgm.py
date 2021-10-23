@@ -20,3 +20,8 @@ nesnt2pgm(dumpfilename = "./traspas/dmp/smario_traspas_nt.dmp",
               incl_attr = False,
               halfnametable = True)
 
+nesnt2ppm(dumpfilename = "./traspas/dmp/smario_traspas_nt.dmp",
+              dest_path = "./pgm/",
+              incl_attr = False,
+              halfnametable = True)
+

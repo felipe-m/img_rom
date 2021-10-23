@@ -17,33 +17,35 @@ module main (
  wire w2;
  wire [0:9] w3;
  wire [0:9] w4;
- wire w5;
- wire [0:1] w6;
- wire [0:1] w7;
- wire [0:1] w8;
- wire [0:9] w9;
- wire [0:7] w10;
+ wire [0:4] w5;
+ wire [0:4] w6;
+ wire [0:7] w7;
+ wire [0:2] w8;
+ wire [0:7] w9;
+ wire [0:2] w10;
  wire [0:7] w11;
- wire [0:2] w12;
+ wire [0:7] w12;
  wire [0:2] w13;
- wire [0:7] w14;
- wire [0:7] w15;
- wire [0:2] w16;
+ wire w14;
+ wire w15;
+ wire w16;
  wire w17;
  wire w18;
- wire w19;
- wire w20;
- wire w21;
+ wire [0:1] w19;
+ wire [0:1] w20;
+ wire [0:1] w21;
+ wire w22;
+ wire w23;
  assign w1 = v2cb7a3;
  assign w2 = va90334;
- assign v8514bc = w6;
- assign v2cf531 = w7;
- assign v62c682 = w8;
- assign v4e6402 = w20;
- assign v712bbf = w21;
- assign w11 = w10;
- assign w13 = w12;
- assign w17 = w0;
+ assign v8514bc = w19;
+ assign v2cf531 = w20;
+ assign v62c682 = w21;
+ assign v4e6402 = w22;
+ assign v712bbf = w23;
+ assign w9 = w7;
+ assign w10 = w8;
+ assign w18 = w0;
  vd8d107 v820333 (
   .vc82b22(w0),
   .va8051c(w1)
@@ -53,44 +55,48 @@ module main (
   .v12e5c2(w2),
   .v9459b8(w3),
   .vb50967(w4),
-  .v7688c4(w18),
-  .v7af556(w19)
- );
- vac2f61 v9ca642 (
-  .ve7cb90(w9),
-  .v237199(w10)
+  .v7688c4(w15),
+  .v7af556(w16),
+  .v27278a(w17)
  );
  v5d7f3a v189a1d (
-  .v83e377(w10),
-  .ve091bd(w12),
-  .v237199(w14)
+  .v83e377(w7),
+  .ve091bd(w8),
+  .v237199(w11)
  );
  ve87f4a v9e16af (
-  .v83e377(w11),
-  .ve091bd(w13),
-  .v237199(w15)
+  .v83e377(w9),
+  .ve091bd(w10),
+  .v237199(w12)
  );
- main_vdf3f26 vdf3f26 (
-  .col(w3),
-  .fila(w4),
-  .col9(w5),
-  .dir_ntable(w9),
-  .fila_in(w12),
-  .col_in(w16)
+ v82cebd v5e3d2e (
+  .v4b5b17(w3),
+  .v117158(w4),
+  .v822d73(w5),
+  .vca1728(w6),
+  .v24d12d(w8),
+  .v5467e1(w13),
+  .v7df241(w14)
  );
- main_v0dc009 v0dc009 (
-  .col9(w5),
-  .red(w6),
-  .green(w7),
-  .blue(w8),
-  .d_ptable0(w14),
-  .d_ptable1(w15),
-  .col_in(w16),
-  .clk(w17),
-  .hsinc(w18),
-  .vsinc(w19),
-  .hsync(w20),
-  .vsync(w21)
+ v3ff344 vabd8fd (
+  .v6a586c(w5),
+  .v86d61f(w6),
+  .v237199(w7)
+ );
+ v47ab07 v405288 (
+  .va89817(w11),
+  .va264a3(w12),
+  .v2c3fae(w13),
+  .v7c7bf8(w14),
+  .v8973a7(w15),
+  .vb0e99d(w16),
+  .v5074f5(w17),
+  .veabd1c(w18),
+  .va48225(w19),
+  .v0d0802(w20),
+  .v1ad6a6(w21),
+  .vf00ce9(w22),
+  .va770b4(w23)
  );
 endmodule
 
@@ -207,39 +213,6 @@ module vec49d1_v9a5c44 (
  
 endmodule
 //---- Top entity
-module vac2f61 (
- input [9:0] ve7cb90,
- output [7:0] v237199
-);
- wire [0:9] w0;
- wire [0:7] w1;
- assign w0 = ve7cb90;
- assign v237199 = w1;
- vac2f61_v5874e0 v5874e0 (
-  .dir_ntable(w0),
-  .num_patron(w1)
- );
-endmodule
-
-/*-------------------------------------------------*/
-/*-- NameTable SMario  */
-/*-- - - - - - - - - - - - - - - - - - - - - - - --*/
-/*-- Name Table of a SuperMario screen
-/*-------------------------------------------------*/
-
-module vac2f61_v5874e0 (
- input [9:0] dir_ntable,
- output [7:0] num_patron
-);
- // @include smario_traspas_nt_nt0.v
- 
- ROM_NTABLE_SMARIO_TRASPAS NTABLE
- (
-   .addr(dir_ntable),
-   .dout(num_patron)
- );
-endmodule
-//---- Top entity
 module v5d7f3a (
  input [7:0] v83e377,
  input [2:0] ve091bd,
@@ -321,33 +294,181 @@ module ve87f4a_v5874e0 (
    .dout(d_ptable1)
  );
 endmodule
+//---- Top entity
+module v82cebd (
+ input [9:0] v117158,
+ input [9:0] v4b5b17,
+ output [4:0] v822d73,
+ output [4:0] vca1728,
+ output [2:0] v24d12d,
+ output [2:0] v5467e1,
+ output v7df241
+);
+ wire [0:9] w0;
+ wire [0:9] w1;
+ wire [0:4] w2;
+ wire [0:4] w3;
+ wire [0:2] w4;
+ wire [0:2] w5;
+ wire w6;
+ assign w0 = v117158;
+ assign w1 = v4b5b17;
+ assign v822d73 = w2;
+ assign vca1728 = w3;
+ assign v24d12d = w4;
+ assign v5467e1 = w5;
+ assign v7df241 = w6;
+ v82cebd_v5874e0 v5874e0 (
+  .fila(w0),
+  .col(w1),
+  .fila_cuad(w2),
+  .col_cuad(w3),
+  .fila_in(w4),
+  .col_in(w5),
+  .col9(w6)
+ );
+endmodule
 
-module main_vdf3f26 (
- input [9:0] col,
+/*-------------------------------------------------*/
+/*-- grid_signals  */
+/*-- - - - - - - - - - - - - - - - - - - - - - - --*/
+/*-- generation of grid signals
+/*-------------------------------------------------*/
+
+module v82cebd_v5874e0 (
  input [9:0] fila,
- output [9:0] dir_ntable,
+ input [9:0] col,
+ output [4:0] fila_cuad,
+ output [4:0] col_cuad,
  output [2:0] fila_in,
  output [2:0] col_in,
  output col9
 );
- // Generate the address for the Name Table memory
+ // Generate grid signals
  
- //assign col_cuad = col[8:4];
- //assign fila_cuad = fila[8:4];
- assign dir_ntable = {fila[8:4], col[8:4]};
+ assign col_cuad = col[8:4];
+ assign fila_cuad = fila[8:4];
+ 
  // useful to know when we are over column 511
  assign col9 = col[9];
  assign fila_in = fila[3:1];
  assign col_in = col[3:1];
 endmodule
+//---- Top entity
+module v3ff344 (
+ input [4:0] v6a586c,
+ input [4:0] v86d61f,
+ output [7:0] v237199
+);
+ wire [0:7] w0;
+ wire [0:4] w1;
+ wire [0:4] w2;
+ assign v237199 = w0;
+ assign w1 = v6a586c;
+ assign w2 = v86d61f;
+ v3ff344_v5874e0 v5874e0 (
+  .num_patron(w0),
+  .fila_cuad(w1),
+  .col_cuad(w2)
+ );
+endmodule
 
-module main_v0dc009 (
+/*-------------------------------------------------*/
+/*-- NameTable SMario sports  */
+/*-- - - - - - - - - - - - - - - - - - - - - - - --*/
+/*-- Name Table of a SuperMario screen, input ports are split in grid col & row
+/*-------------------------------------------------*/
+
+module v3ff344_v5874e0 (
+ input [4:0] fila_cuad,
+ input [4:0] col_cuad,
+ output [7:0] num_patron
+);
+ // @include smario_traspas_nt_nt0.v
+ 
+ wire [9:0] dir_ntable;
+ 
+ assign dir_ntable = {fila_cuad, col_cuad};
+ 
+ ROM_NTABLE_SMARIO_TRASPAS NTABLE
+ (
+   .addr(dir_ntable),
+   .dout(num_patron)
+ );
+endmodule
+//---- Top entity
+module v47ab07 (
+ input [7:0] va89817,
+ input [7:0] va264a3,
+ input [2:0] v2c3fae,
+ input v7c7bf8,
+ input v8973a7,
+ input vb0e99d,
+ input v5074f5,
+ input veabd1c,
+ output [1:0] va48225,
+ output [1:0] v0d0802,
+ output [1:0] v1ad6a6,
+ output vf00ce9,
+ output va770b4
+);
+ wire w0;
+ wire w1;
+ wire [0:1] w2;
+ wire [0:1] w3;
+ wire [0:1] w4;
+ wire [0:7] w5;
+ wire [0:2] w6;
+ wire w7;
+ wire w8;
+ wire w9;
+ wire w10;
+ wire w11;
+ wire [0:7] w12;
+ assign w0 = v7c7bf8;
+ assign w1 = v5074f5;
+ assign va48225 = w2;
+ assign v0d0802 = w3;
+ assign v1ad6a6 = w4;
+ assign w5 = va264a3;
+ assign w6 = v2c3fae;
+ assign w7 = v8973a7;
+ assign w8 = vb0e99d;
+ assign vf00ce9 = w9;
+ assign va770b4 = w10;
+ assign w11 = veabd1c;
+ assign w12 = va89817;
+ v47ab07_v5874e0 v5874e0 (
+  .col9(w0),
+  .visible(w1),
+  .red(w2),
+  .green(w3),
+  .blue(w4),
+  .d_ptable1(w5),
+  .col_in(w6),
+  .hsinc(w7),
+  .vsinc(w8),
+  .hsync(w9),
+  .vsync(w10),
+  .clk(w11),
+  .d_ptable0(w12)
+ );
+endmodule
+
+/*-------------------------------------------------*/
+/*-- Name & Pattern Tables Pxl Gen  */
+/*-- - - - - - - - - - - - - - - - - - - - - - - --*/
+/*-- Pixel generator for Name Table and pattern tables
+/*-------------------------------------------------*/
+
+module v47ab07_v5874e0 (
  input [7:0] d_ptable0,
  input [7:0] d_ptable1,
  input [2:0] col_in,
  input col9,
  input hsinc,
  input vsinc,
+ input visible,
  input clk,
  output [1:0] red,
  output [1:0] green,
@@ -372,6 +493,7 @@ module main_v0dc009 (
      rojo   = 2'b00;
      verde  = 2'b00;
      azul   = 2'b00;
+     if (visible) begin
      if (col9 == 1'b0) begin  // less than 512
          case (color_index)
            2'b00:
@@ -400,7 +522,7 @@ module main_v0dc009 (
              end
          endcase
      end
-     //end
+     end
    end
    // register to synchronize
    always @ (posedge clk)

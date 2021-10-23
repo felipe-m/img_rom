@@ -21,10 +21,12 @@ Name table can be shown in grayscale (each gray level corresponds to a pattern i
 ![Tabla nombres mario](p1_ntable/smario_tablanombres_traspas_invertido_x4.png)
 
 Or in color to have more contrast and better appreciate the indexes:
+Each index is a color in RGB222. There could be duplicated indexes since RGB222 has 64 colores and there are 256 indexes
+But to show how the Alhambra II with a RGB222 connector would show it
 
 ![Tabla nombres mario](p1_ntable/smario_tablanombres_traspas_rgb222_x4.png)
 
-### [Icestudio project](p1_nable/smario/icestudio)
+### [Icestudio project](p1_ntable/smario/icestudio)
 
 ![Icestudio Name Table](p1_ntable/icestudio_nametable.png)
 

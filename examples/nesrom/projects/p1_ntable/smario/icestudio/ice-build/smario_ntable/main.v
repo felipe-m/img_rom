@@ -19,19 +19,21 @@ module main (
  wire w4;
  wire [0:9] w5;
  wire [0:9] w6;
- wire w7;
- wire [0:1] w8;
- wire [0:1] w9;
- wire [0:1] w10;
- wire [0:9] w11;
- wire [0:7] w12;
+ wire [0:4] w7;
+ wire [0:4] w8;
+ wire [0:7] w9;
+ wire w10;
+ wire w11;
+ wire [0:1] w12;
+ wire [0:1] w13;
+ wire [0:1] w14;
  assign w1 = v2cb7a3;
  assign w2 = va90334;
  assign v4e6402 = w3;
  assign v712bbf = w4;
- assign v8514bc = w8;
- assign v2cf531 = w9;
- assign v62c682 = w10;
+ assign v8514bc = w12;
+ assign v2cf531 = w13;
+ assign v62c682 = w14;
  vd8d107 v820333 (
   .vc82b22(w0),
   .va8051c(w1)
@@ -41,25 +43,29 @@ module main (
   .v12e5c2(w2),
   .v7688c4(w3),
   .v7af556(w4),
-  .v9459b8(w5),
-  .vb50967(w6)
+  .vb50967(w5),
+  .v9459b8(w6),
+  .v27278a(w10)
  );
- main_vdf3f26 vdf3f26 (
-  .col(w5),
-  .fila(w6),
-  .col9(w7),
-  .dir_ntable(w11)
+ v82cebd v06ec4a (
+  .v117158(w5),
+  .v4b5b17(w6),
+  .v822d73(w7),
+  .vca1728(w8),
+  .v7df241(w11)
  );
- main_v0dc009 v0dc009 (
-  .col9(w7),
-  .red(w8),
-  .green(w9),
-  .blue(w10),
-  .num_patron(w12)
+ v3ff344 v26fb46 (
+  .v6a586c(w7),
+  .v86d61f(w8),
+  .v237199(w9)
  );
- vac2f61 v9ca642 (
-  .ve7cb90(w11),
-  .v237199(w12)
+ vc8e043 v594e75 (
+  .va264a3(w9),
+  .v5074f5(w10),
+  .v7c7bf8(w11),
+  .va48225(w12),
+  .v0d0802(w13),
+  .v1ad6a6(w14)
  );
 endmodule
 
@@ -176,31 +182,100 @@ module vec49d1_v9a5c44 (
  
 endmodule
 //---- Top entity
-module vac2f61 (
- input [9:0] ve7cb90,
- output [7:0] v237199
+module v82cebd (
+ input [9:0] v117158,
+ input [9:0] v4b5b17,
+ output [4:0] v822d73,
+ output [4:0] vca1728,
+ output [2:0] v24d12d,
+ output [2:0] v5467e1,
+ output v7df241
 );
  wire [0:9] w0;
- wire [0:7] w1;
- assign w0 = ve7cb90;
- assign v237199 = w1;
- vac2f61_v5874e0 v5874e0 (
-  .dir_ntable(w0),
-  .num_patron(w1)
+ wire [0:9] w1;
+ wire [0:4] w2;
+ wire [0:4] w3;
+ wire [0:2] w4;
+ wire [0:2] w5;
+ wire w6;
+ assign w0 = v117158;
+ assign w1 = v4b5b17;
+ assign v822d73 = w2;
+ assign vca1728 = w3;
+ assign v24d12d = w4;
+ assign v5467e1 = w5;
+ assign v7df241 = w6;
+ v82cebd_v5874e0 v5874e0 (
+  .fila(w0),
+  .col(w1),
+  .fila_cuad(w2),
+  .col_cuad(w3),
+  .fila_in(w4),
+  .col_in(w5),
+  .col9(w6)
  );
 endmodule
 
 /*-------------------------------------------------*/
-/*-- NameTable SMario  */
+/*-- grid_signals  */
 /*-- - - - - - - - - - - - - - - - - - - - - - - --*/
-/*-- Name Table of a SuperMario screen
+/*-- generation of grid signals
 /*-------------------------------------------------*/
 
-module vac2f61_v5874e0 (
- input [9:0] dir_ntable,
+module v82cebd_v5874e0 (
+ input [9:0] fila,
+ input [9:0] col,
+ output [4:0] fila_cuad,
+ output [4:0] col_cuad,
+ output [2:0] fila_in,
+ output [2:0] col_in,
+ output col9
+);
+ // Generate grid signals
+ 
+ assign col_cuad = col[8:4];
+ assign fila_cuad = fila[8:4];
+ 
+ // useful to know when we are over column 511
+ assign col9 = col[9];
+ assign fila_in = fila[3:1];
+ assign col_in = col[3:1];
+endmodule
+//---- Top entity
+module v3ff344 (
+ input [4:0] v6a586c,
+ input [4:0] v86d61f,
+ output [7:0] v237199
+);
+ wire [0:7] w0;
+ wire [0:4] w1;
+ wire [0:4] w2;
+ assign v237199 = w0;
+ assign w1 = v6a586c;
+ assign w2 = v86d61f;
+ v3ff344_v5874e0 v5874e0 (
+  .num_patron(w0),
+  .fila_cuad(w1),
+  .col_cuad(w2)
+ );
+endmodule
+
+/*-------------------------------------------------*/
+/*-- NameTable SMario sports  */
+/*-- - - - - - - - - - - - - - - - - - - - - - - --*/
+/*-- Name Table of a SuperMario screen, input ports are split in grid col & row
+/*-------------------------------------------------*/
+
+module v3ff344_v5874e0 (
+ input [4:0] fila_cuad,
+ input [4:0] col_cuad,
  output [7:0] num_patron
 );
  // @include smario_traspas_nt_nt0.v
+ 
+ wire [9:0] dir_ntable;
+ 
+ assign dir_ntable = {fila_cuad, col_cuad};
  
  ROM_NTABLE_SMARIO_TRASPAS NTABLE
  (
@@ -208,25 +283,47 @@ module vac2f61_v5874e0 (
    .dout(num_patron)
  );
 endmodule
-
-module main_vdf3f26 (
- input [9:0] col,
- input [9:0] fila,
- output [9:0] dir_ntable,
- output col9
+//---- Top entity
+module vc8e043 (
+ input [7:0] va264a3,
+ input v7c7bf8,
+ input v5074f5,
+ output [1:0] va48225,
+ output [1:0] v0d0802,
+ output [1:0] v1ad6a6
 );
- // Generate the address for the Name Table memory
- 
- //assign cuad_col = col[8:4];
- //assign cuad_fila = fila[8:4];
- assign dir_ntable = {fila[8:4], col[8:4]};
- // useful to know when we are over column 511
- assign col9 = col[9];
+ wire [0:7] w0;
+ wire w1;
+ wire w2;
+ wire [0:1] w3;
+ wire [0:1] w4;
+ wire [0:1] w5;
+ assign w0 = va264a3;
+ assign w1 = v7c7bf8;
+ assign w2 = v5074f5;
+ assign va48225 = w3;
+ assign v0d0802 = w4;
+ assign v1ad6a6 = w5;
+ vc8e043_v5874e0 v5874e0 (
+  .num_patron(w0),
+  .col9(w1),
+  .visible(w2),
+  .red(w3),
+  .green(w4),
+  .blue(w5)
+ );
 endmodule
 
-module main_v0dc009 (
+/*-------------------------------------------------*/
+/*-- Name Table Pixel generator  */
+/*-- - - - - - - - - - - - - - - - - - - - - - - --*/
+/*-- Pixel generation with just the NameTable 
+/*-------------------------------------------------*/
+
+module vc8e043_v5874e0 (
  input [7:0] num_patron,
  input col9,
+ input visible,
  output [1:0] red,
  output [1:0] green,
  output [1:0] blue
@@ -241,7 +338,7 @@ module main_v0dc009 (
      rojo   = 2'b00;
      verde  = 2'b00;
      azul   = 2'b00;
-     //if (visible) begin
+     if (visible) begin
        if (col9 == 1'b0) begin  // less than 512
          rojo  = ~num_patron [7:6];
          //verde = ~num_patron [7:6];
@@ -249,6 +346,6 @@ module main_v0dc009 (
          //azul  = ~num_patron [7:6];
          azul  = num_patron [3:2]; //instead of num_patron [7:6], to have more colors
        end
-     //end
+     end
    end
 endmodule

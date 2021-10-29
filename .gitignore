@@ -9,3 +9,6 @@
 *.pyc
 
 debug.log
+
+# temporary file
+.sconsign.dblite

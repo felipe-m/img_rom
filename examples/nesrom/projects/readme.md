@@ -16,6 +16,8 @@ Video para más información (video in Spanish): https://youtu.be/Twvdh8xt7a4
 
 Y pdf: https://doi.org/10.5281/zenodo.5303187 
 
+Serie de videos: https://youtube.com/playlist?list=PLSUmB2yTypWE5cFtsGbdwOUH4URFshsYs)
+
 Name table can be shown in grayscale (each gray level corresponds to a pattern index):
 
 ![Tabla nombres mario](p1_ntable/smario_tablanombres_traspas_invertido_x4.png)
@@ -36,6 +38,10 @@ Second project includes Name Table and the Pattern Table divided in two memories
 Only one palette because there is no Attribute Table: only 4 colors in total
 
 VHDL, verilog and Icestudio versions
+
+Video para más información (video in Spanish): https://youtu.be/M-aZKPRhV_Y
+
+Y pdf: https://doi.org/10.5281/zenodo.5508138
 
 ![Tabla nombres+patrones mario](p2_np_tables/smario_traspas2_bg_paletamarron.png)
 

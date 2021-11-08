@@ -103,6 +103,17 @@ En el directorio [nesrom](nesrom) hay memorias para hacer gráficos basados en mo
 
 1. [rom1b_1f_monster_16_t.vhd](rom1b_1f_monster_16_scared_t.vhd)
 
+## PacMan blanco y negro
+* Imagen de 16x16.
+* Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
+* Cada pixel es un bit de la dirección de memoria.
+* 16 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![pacman_16x16_bn](img/pacman_16x16_bn.png)
+* ![pacman_16x16_bn_x4](../img/pacman_16x16_bn_x4.png)
+
+1. [rom1b_1f_pacman_16x16_bn_t.vhd](rom1b_1f_pacman_16x16_bn_t.vhd)
+
 ## Fantasma blanco y negro normal y asustado en una memoria
 * Imagen de 16 columnas x 32 filas.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)

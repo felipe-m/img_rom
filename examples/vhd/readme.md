@@ -1,6 +1,17 @@
 # Ejemplos VHDL
 
-En el directorio [nesrom](nesrom) hay memorias para hacer gráficos basados en mosaicos (_tile based_)
+En el directorio [../nesrom](../nesrom) hay memorias para hacer gráficos basados en mosaicos (_tile based_)
+
+En el directorio [projects/img_memo_vga_1/vhd](projects/img_memo_vga_1/vhd) hay un ejemplo de como pintar una memoria en la VGA
+Tienes videos que lo explican aquí:
+
+1. Tutorial 1: https://youtu.be/xqytkCZlQxQ Contadores decimales
+2. Tutorial 2: https://youtu.be/BteyXG891YI Contadores decimales, mostrar en cuadrícula
+3. Tutorial 3: https://youtu.be/2Urj9zEU5R8 Contadores decimales, mostrar en cualquier parte
+4. Tutorial 4: https://youtu.be/FY7PnAW4cCI Contadores binarios
+5. Tutorial 5: https://youtu.be/ns7eot0pwo0 Ampliar imagen: laberinto
+6. Tutorial 6: https://youtu.be/7NUEXcu0BJk Imágenes en color
+7. Tutorial 7: https://youtu.be/Oyckgeg_nnE Imágenes en color con una memori
 
 ## Monstruo (fantasma) del pac-man
 * Imagen de 32x32.

@@ -43,6 +43,9 @@ end display;
 
 architecture behavioral of display is
 
+  -- pixel en blanco/negro que viene de la memoria. Por tanto es de un unico bit
+  signal pixel_memo : std_logic;
+
 begin
 
   -- la memoria tiene 4 bits de direcciones, ya que tiene 16 filas:
@@ -50,94 +53,63 @@ begin
   -- como fila es unsigned y addr_memo es std_logic_vector, hay que hacer cast
   addr_memo <= std_logic_vector(fila(3 downto 0));
 
-  P_display: Process (visible, col, dato_memo)
+
+  -- seleccionamos el pixel que viene de la memoria
+  -- la imagen tiene 16 columnas, con los 4 bits menos significativos
+  -- de la columna se selecciona el bit correspondiente.
+  -- Esto es un multiplexor, que estan explicados en el manual:
+  --   http://hdl.handle.net/10115/4045
+  -- y en estos videos:
+  --   https://youtu.be/CQdw-M1ooTI
+  --   https://youtu.be/or_vwCTSY8M
+  -- lineas de codigo, aunque seguramente esta se entienda mejor, y son 
+  -- equivalentes en cuanto al circuito generado
+  -- la imagen va a salir en espejo horizontal respecto a la memoria
+  with col(3 downto 0) select
+    pixel_memo <= dato_memo(0)  when "0000",
+                  dato_memo(1)  when "0001",
+                  dato_memo(2)  when "0010",
+                  dato_memo(3)  when "0011",
+                  dato_memo(4)  when "0100",
+                  dato_memo(5)  when "0101",
+                  dato_memo(6)  when "0110",
+                  dato_memo(7)  when "0111",
+                  dato_memo(8)  when "1000",
+                  dato_memo(9)  when "1001",
+                  dato_memo(10) when "1010",
+                  dato_memo(11) when "1011",
+                  dato_memo(12) when "1100",
+                  dato_memo(13) when "1101",
+                  dato_memo(14) when "1110",
+                  dato_memo(15) when others; -- "0011",
+
+  -- alternativa mas corta para describir el mismo multiplexor anterior
+  -- con una sola linea. Aunque seguramente la anterior se entienda mejor,
+  -- son equivalentes en cuanto al circuito generado
+  -- como la columna es un std_logic_vector, hay que pasarlo a entero
+  --pixel_memo <= dato_memo(to_integer(col(3 downto 0)));
+
+
+  -- pintamos el pixel blanco o negro segun el color del pixel
+  -- se podria utilizar una paleta y pintar de otros dos colores
+  P_display: Process (visible, pixel_memo)
   begin
     -- cuando no es visible se ponen todos los colores a negro
     rojo   <= (others=>'0');
     verde  <= (others=>'0');
     azul   <= (others=>'0');
     if visible = '1' then
-      -- la imagen tiene 16 columnas, con los 4 bits menos significativos
-      -- de la columna se selecciona el bit correspondiente. Esto en realidad
-      -- es una forma condensada de describir un multiplexor
-      -- como la columna es un std_logic_vector, hay que pasarlo a entero
-      rojo  <= (others=>dato_memo(to_integer(col(3 downto 0)))); 
-      verde <= (others=>dato_memo(to_integer(col(3 downto 0)))); 
-      azul  <= (others=>dato_memo(to_integer(col(3 downto 0)))); 
-      -- la manera extendida de describirlo seria la siguiente
-      -- es equivalente pero mucho mas larga:
-      --case col(3 downto 0) is
-      --  when "0000" =>
-      --    -- ponemos los 4 bits de rojo al valor de la memoria
-      --    rojo(0) <= dato_memo(0);
-      --    rojo(1) <= dato_memo(0);
-      --    rojo(2) <= dato_memo(0);
-      --    rojo(3) <= dato_memo(0);
-      --    -- para no poner los 4 bits, esto hace lo mismo
-      --    verde<= (others=>dato_memo(0));
-      --    azul <= (others=>dato_memo(0));
-      --  when "0001" =>
-      --    rojo <= (others=>dato_memo(1));
-      --    verde<= (others=>dato_memo(1));
-      --    azul <= (others=>dato_memo(1));
-      --  when "0010" =>
-      --    rojo <= (others=>dato_memo(2));
-      --    verde<= (others=>dato_memo(2));
-      --    azul <= (others=>dato_memo(2));
-      --  when "0011" =>
-      --    rojo <= (others=>dato_memo(3));
-      --    verde<= (others=>dato_memo(3));
-      --    azul <= (others=>dato_memo(3));
-      --  when "0100" =>
-      --    rojo <= (others=>dato_memo(4));
-      --    verde<= (others=>dato_memo(4));
-      --    azul <= (others=>dato_memo(4));
-      --  when "0101" =>
-      --    rojo <= (others=>dato_memo(5));
-      --    verde<= (others=>dato_memo(5));
-      --    azul <= (others=>dato_memo(5));
-      --  when "0110" =>
-      --    rojo <= (others=>dato_memo(6));
-      --    verde<= (others=>dato_memo(6));
-      --    azul <= (others=>dato_memo(6));
-      --  when "0111" =>
-      --    rojo <= (others=>dato_memo(7));
-      --    verde<= (others=>dato_memo(7));
-      --    azul <= (others=>dato_memo(7));
-      --  when "1000" =>
-      --    rojo <= (others=>dato_memo(8));
-      --    verde<= (others=>dato_memo(8));
-      --    azul <= (others=>dato_memo(8));
-      --  when "1001" =>
-      --    rojo <= (others=>dato_memo(9));
-      --    verde<= (others=>dato_memo(9));
-      --    azul <= (others=>dato_memo(9));
-      --  when "1010" =>
-      --    rojo <= (others=>dato_memo(10));
-      --    verde<= (others=>dato_memo(10));
-      --    azul <= (others=>dato_memo(10));
-      --  when "1011" =>
-      --    rojo <= (others=>dato_memo(11));
-      --    verde<= (others=>dato_memo(11));
-      --    azul <= (others=>dato_memo(11));
-      --  when "1100" =>
-      --    rojo <= (others=>dato_memo(12));
-      --    verde<= (others=>dato_memo(12));
-      --    azul <= (others=>dato_memo(12));
-      --  when "1101" =>
-      --    rojo <= (others=>dato_memo(13));
-      --    verde<= (others=>dato_memo(13));
-      --    azul <= (others=>dato_memo(13));
-      --  when "1110" =>
-      --    rojo <= (others=>dato_memo(14));
-      --    verde<= (others=>dato_memo(14));
-      --    azul <= (others=>dato_memo(14));
-      --  when others => --"1111" =>
-      --    rojo <= (others=>dato_memo(15));
-      --    verde<= (others=>dato_memo(15));
-      --    azul <= (others=>dato_memo(15));
-      --
-      --end case;
+      -- como en esta FPGA son 4 bits de canal de color, ponemos los 4 bits
+      -- al valor del pixel
+      rojo(0) <= pixel_memo;
+      rojo(1) <= pixel_memo;
+      rojo(2) <= pixel_memo;
+      rojo(3) <= pixel_memo;
+      -- una manera mas simplificada de hacer lo anterior es la siguiente
+      -- ya que nos ahorramos lineas. Con una sentencia ponemos todos los bits
+      -- de verde al valor de pixel_memo. Son equivalentes.
+      verde <= (others=>pixel_memo);
+      azul  <= (others=>pixel_memo); 
     end if;
   end process;
   

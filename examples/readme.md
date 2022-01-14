@@ -262,3 +262,25 @@ En color:
 1. [rom1b_red_racetrack_1.vhd](vhd/rom1b_red_racetrack_1.vhd) (no hace falta)
 1. [rom1b_green_racetrack_1.vhd](vhd/rom1b_green_racetrack_1.vhd)
 1. [rom1b_blue_racetrack_1.vhd](vhd/rom1b_blue_racetrack_1.vhd)
+
+
+## Coche 8x8 blanco y negro
+* Imagen de 8x8.
+* Una memoria. En cada direccion de memoria está la fila de 8 bits(pixeles)
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
+* 8 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![car8x8_down_bn](img/car8x8_down_bn.png)
+* ![car8x8_down_x8_bn](img/car8x8_down_x8_bn.png)
+* [rom1b_1f_car8x8_down_t.vhd](vhd/rom1b_1f_car8x8_down_t.vhd)
+
+## Flechas y coches 8x8 blanco y negro en cuatro direcciones
+* 8 Imágenes de 8x8.
+* Una memoria. En cada direccion de memoria está la fila de 8 bits(pixeles)
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
+* 64 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![arrow_car_8x8_8dir_bn](img/arrow_car_8x8_8dir_bn.png)
+* ![arrow_car_8x8_8dir_x4_bn](img/arrow_car_8x8_8dir_x4_bn.png)
+* [rom1b_1f_arrow_car_8x8_8dir_t.vhd](vhd/rom1b_1f_arrow_car_8x8_8dir_t.vhd)
+

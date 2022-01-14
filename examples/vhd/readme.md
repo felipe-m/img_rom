@@ -94,7 +94,7 @@ Tienes videos que lo explican aquí:
 ## Fantasma blanco y negro
 * Imagen de 16x16.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 16 direcciones de memoria
 * 1 bit para el color (monocroma)
 * ![monster_bn_16](../img/monster_bn_16x16_negro.png)
@@ -106,7 +106,7 @@ Tienes videos que lo explican aquí:
 ## Fantasma blanco y negro asustado
 * Imagen de 16x16.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 16 direcciones de memoria
 * 1 bit para el color (monocroma)
 * ![monster_bn_16_scared](../img/monster_bn_16x16_scared.png)
@@ -117,7 +117,7 @@ Tienes videos que lo explican aquí:
 ## PacMan blanco y negro
 * Imagen de 16x16.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 16 direcciones de memoria
 * 1 bit para el color (monocroma)
 * ![pacman_16x16_bn](img/pacman_16x16_bn.png)
@@ -128,7 +128,7 @@ Tienes videos que lo explican aquí:
 ## Fantasma blanco y negro normal y asustado en una memoria
 * Imagen de 16 columnas x 32 filas.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 32 direcciones de memoria (dos imágenes)
 * 1 bit para el color (monocroma)
 * ![monster_bn_16_scared](../img/monster_bn_16x32_normal_scared.png)
@@ -140,7 +140,7 @@ Tienes videos que lo explican aquí:
 ## 8 personajes y formas en una memoria
 * Imagen de 16 columnas x 128 filas.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 128 direcciones de memoria (8 imágenes)
   * Opción: 1 bit para el color (monocroma)
   * Opción: 3 bit para el color (3 memorias)
@@ -159,7 +159,7 @@ En blanco y negro
 ## 16 personajes y formas en una memoria
 * Imagen de 16 columnas x 256 filas.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 128 direcciones de memoria (8 imágenes)
   * Opción: 1 bit para el color (monocroma)
   * Opción: 3 bit para el color (3 memorias)
@@ -178,7 +178,7 @@ En blanco y negro
 ## 32 caracteres: números, algunas letras y personajes en una memoria (3 memorias de color)
 * Imagen de 16 columnas x 512 filas.
 * Una memoria. En cada direccion de memoria está la fila de 16 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria.
 * 512 direcciones de memoria (32 imágenes)
 * 3 memorias de cada color (puede ser indexado)
 * Los caracteres son:
@@ -219,7 +219,7 @@ En color:
 ## Laberinto 20x15 blanco y negro
 * Imagen de 20 columnas x 15 filas
 * Una memoria. En cada direccion de memoria está la fila de 20 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 15 direcciones de memoria
 * El color negro ('0') es el pasillo
 * ![laberinto](../img/laberinto_x4.png)
@@ -229,7 +229,7 @@ En color:
 ## Laberinto 40x30 blanco y negro
 * Imagen de 40 columnas x 30 filas
 * Una memoria. En cada direccion de memoria está la fila de 40 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 30 direcciones de memoria
 * El color blanco ('1') es el pasillo
 * ![laberinto_40x30](../img/laberinto_40x30_x4.png)
@@ -239,7 +239,7 @@ En color:
 ## Pista de carreras 32x30 blanco y negro
 * Imagen de 32 columnas x 30 filas
 * Una memoria. En cada direccion de memoria está la fila de 32 bits(pixeles)
-* Cada pixel es un bit de la dirección de memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 30 direcciones de memoria
 * El color blanco ('1') es la pista
 * ![racetrack_1_bn_x4](../img/racetrack_1_bn_x4.png)
@@ -249,7 +249,7 @@ En color:
 ## Pista de carreras 32x30 4 colores (2 memorias o 3)
 * Imagen de 32 columnas x 30 filas
 * Dos memorias (o tres, pero la de rojo no hace falta). En cada direccion de memoria está la fila de 32 bits(pixeles)
-* Cada pixel es un bit de la dirección de cada memoria.
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
 * 30 direcciones de memoria
 * Si se toman las memorias Verde y Azul. El rojo no hace falta. Los colores son:
     * "00": borde de pista (rojo (100) en la de tres colores)
@@ -261,4 +261,24 @@ En color:
 1. [rom1b_red_racetrack_1.vhd](rom1b_red_racetrack_1.vhd) (no hace falta)
 1. [rom1b_green_racetrack_1.vhd](rom1b_green_racetrack_1.vhd)
 1. [rom1b_blue_racetrack_1.vhd](rom1b_blue_racetrack_1.vhd)
+
+## Coche 8x8 blanco y negro
+* Imagen de 8x8.
+* Una memoria. En cada direccion de memoria está la fila de 8 bits(pixeles)
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
+* 8 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![car8x8_down_bn](../img/car8x8_down_bn.png)
+* ![car8x8_down_x8_bn](../img/car8x8_down_x8_bn.png)
+* [rom1b_1f_car8x8_down_t.vhd](rom1b_1f_car8x8_down_t.vhd)
+
+## Flechas y coches 8x8 blanco y negro en cuatro direcciones
+* 8 Imágenes de 8x8.
+* Una memoria. En cada direccion de memoria está la fila de 8 bits(pixeles)
+* Cada pixel es un bit del dato de la memoria de la direccón de memoria
+* 64 direcciones de memoria
+* 1 bit para el color (monocroma)
+* ![arrow_car_8x8_8dir_bn](../img/arrow_car_8x8_8dir_bn.png)
+* ![arrow_car_8x8_8dir_x4_bn](../img/arrow_car_8x8_8dir_x4_bn.png)
+* [rom1b_1f_arrow_car_8x8_8dir_t.vhd](rom1b_1f_arrow_car_8x8_8dir_t.vhd)
 

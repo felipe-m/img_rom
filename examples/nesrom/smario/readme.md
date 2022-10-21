@@ -30,7 +30,7 @@ Pantalla Inicio SuperMario:
 [smario_ntable_01_nt0.vhd](00/vhd/comb/smario_ntable_01_nt0.vhd): Mapa de teselas (Tabla de nombres) de 1KiB. Por lo tanto hay una sola tablas de 1KiB. Al final de la tabla están los 64 B de la tabla de atributos
 
 
-[smario_ntable01_attr.vhd](00/vhd/comb/smario_ntable01_attr.vhd): Los 64 bytes de la tabla de atributos separados de la tabla de nombres
+[smario_ntable_01_attr.vhd](00/vhd/comb/smario_ntable_01_attr.vhd): Los 64 bytes de la tabla de atributos separados de la tabla de nombres
 
 [smario_ptable.vhd](00/smario_ptable.vhd): Las teselas (tiles), la tabla de patrones de sprites y de fondo. Con los dos planos de color. 8KiB en total
 
